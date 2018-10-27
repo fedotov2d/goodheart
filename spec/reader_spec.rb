@@ -25,4 +25,9 @@ RSpec.describe Clojure::Reader do
   it "raise exception on unbalanced hash map" do
     expect { described_class.new "{1" }.to raise_error(Exception, "Unbalanced {}")
   end
+
+  it "read symbol correct" do
+    r = described_class.new " vector "
+    expect(r.ast).to eq ["vector"]
+  end
 end

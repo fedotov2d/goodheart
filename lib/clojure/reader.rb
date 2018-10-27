@@ -7,7 +7,8 @@ module Clojure
       @ast = []
       loop do
         break if eof?
-        @ast << read_next
+        r = read_next
+        @ast << r if r
       end
       true
     end
@@ -41,6 +42,7 @@ module Clojure
       when /\(/ then read_form
       when /\[/ then read_form till: "]", into: ["vector"]
       when /\{/ then read_form till: "}", into: ["hash-map"]
+      when /\S/ then read_symbol
       end
     end
 
@@ -70,6 +72,14 @@ module Clojure
         n << cursor
       end
       Integer(n) rescue Float(n)
+    end
+
+    def read_symbol
+      symbol = cursor
+      while next_char.match /\w|-|\.|\//
+        symbol << cursor
+      end
+      symbol
     end
   end
 end
