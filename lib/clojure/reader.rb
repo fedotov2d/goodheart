@@ -38,7 +38,9 @@ module Clojure
       when /\s/ then skip_char
       when /\,/ then skip_char
       when /\d/ then read_number
-      when /\(/ then read_list
+      when /\(/ then read_form
+      when /\[/ then read_form till: "]", into: ["vector"]
+      when /\{/ then read_form till: "}", into: ["hash-map"]
       end
     end
 
@@ -47,17 +49,18 @@ module Clojure
       nil
     end
 
-    def read_list
-      # puts "reading list"
+    def read_form(till: ")", into: [])
+      # puts "reading form"
       # puts "-> #{cursor}"
-      skip_char # (
-      ast = []
-      until cursor == ')'
-        raise Exception, "Unbalanced ()" if eof?
+      opening = cursor
+      skip_char # opening parenthesis
+      ast = into
+      until cursor == till
+        raise Exception, "Unbalanced #{opening}#{till}" if eof?
         r = read_next
         ast << r if r
       end
-      skip_char # )
+      skip_char # closing parenthesis
       ast
     end
 
