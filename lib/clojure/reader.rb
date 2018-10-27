@@ -37,6 +37,7 @@ module Clojure
       when :eof then return
       when /\s/ then skip_char
       when /\,/ then skip_char
+      when /\d/ then read_number
       when /\(/ then read_list
       end
     end
@@ -58,6 +59,14 @@ module Clojure
       end
       skip_char # )
       ast
+    end
+
+    def read_number
+      n = cursor
+      while next_char.match /[\d|.]/
+        n << cursor
+      end
+      Integer(n) rescue Float(n)
     end
   end
 end
