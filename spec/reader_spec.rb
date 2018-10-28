@@ -45,4 +45,14 @@ RSpec.describe Clojure::Reader do
     r = described_class.new " \"\" "
     expect(r.ast).to eq [["str", ["quote", ""]]]
   end
+
+  it "read quoted symbol correct" do
+    r = described_class.new " 'hello "
+    expect(r.ast).to eq [["quote", "hello"]]
+  end
+
+  it "read quoted list correct" do
+    r = described_class.new " '(+ 1 2) "
+    expect(r.ast).to eq [["quote", ["+", 1, 2]]]
+  end
 end

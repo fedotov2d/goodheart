@@ -44,6 +44,7 @@ module Clojure
       when /\{/ then read_form till: "}", into: ["hash-map"]
       when /\:/ then read_keyword
       when /\"/ then read_string
+      when /\'/ then read_quote
       when /\S/ then read_symbol
       end
     end
@@ -83,6 +84,11 @@ module Clojure
         k << cursor
       end
       k.to_sym
+    end
+
+    def read_quote
+      skip_char # '
+      ["quote", read_next]
     end
 
     def read_string
