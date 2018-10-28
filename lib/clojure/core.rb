@@ -1,17 +1,5 @@
 module Clojure
-  class Core
-    @@ctx = {}
-
-    class << self
-      def [] name
-        @@ctx[name]
-      end
-
-      def define(name, value)
-        @@ctx[name] = value
-      end
-    end
-
+  class Core < Clojure::Lib
     define "+", ->(ctx, args) { args.reduce(:+) }
   end
 end
