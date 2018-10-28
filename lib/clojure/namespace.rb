@@ -21,7 +21,7 @@ module Clojure
 
     def form_eval(form)
       fn = self[form.first]
-      fn.call self, form[1..-1]
+      fn.call self, form[1..-1].map { |f| evaluate f }
     end
   end
 end
