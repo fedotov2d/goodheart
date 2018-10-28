@@ -35,4 +35,14 @@ RSpec.describe Clojure::Reader do
     r = described_class.new " :name "
     expect(r.ast).to eq [:name]
   end
+
+  it "read string correct" do
+    r = described_class.new " \"hello\" "
+    expect(r.ast).to eq [["str", ["quote", "hello"]]]
+  end
+
+  it "read empty string correct" do
+    r = described_class.new " \"\" "
+    expect(r.ast).to eq [["str", ["quote", ""]]]
+  end
 end
