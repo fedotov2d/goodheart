@@ -42,6 +42,7 @@ module Clojure
       when /\(/ then read_form
       when /\[/ then read_form till: "]", into: ["vector"]
       when /\{/ then read_form till: "}", into: ["hash-map"]
+      when /\:/ then read_keyword
       when /\S/ then read_symbol
       end
     end
@@ -72,6 +73,15 @@ module Clojure
         n << cursor
       end
       Integer(n) rescue Float(n)
+    end
+
+    def read_keyword
+      next_char
+      k = cursor
+      while next_char.match /\w|\.|#|-|_/
+        k << cursor
+      end
+      k.to_sym
     end
 
     def read_symbol
