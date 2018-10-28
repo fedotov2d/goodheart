@@ -2,10 +2,6 @@ module Clojure
   class Namespace < Hash
     # Clojure's ns | evaluation context | class
 
-    def initialize
-      self["+"] = ->(ctx, args) { args.reduce(:+)}
-    end
-
     def evaluate(form)
       case form
       when Array
@@ -20,7 +16,7 @@ module Clojure
     private
 
     def form_eval(form)
-      fn = self[form.first]
+      fn = self[form.first] || Clojure::Core[form.first]
       fn.call self, form[1..-1].map { |f| evaluate f }
     end
   end
