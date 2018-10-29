@@ -49,6 +49,8 @@ module Clojure
       "#{ctx["*ns*"]}/#{args[0]}"
     end)
 
+    define "byebug", ->(ctx, args) { byebug }
+
     define "ns", ->(ctx, args) { self["def"][ctx, ["*ns*", ["quote", args[0]]]]; nil }
 
     define "fn", (lambda do |ctx, args|
