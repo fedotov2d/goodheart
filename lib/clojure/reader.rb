@@ -100,7 +100,7 @@ module Clojure
 
     def read_symbol
       symbol = cursor
-      while next_char.match /\w|-|\.|\//
+      while next_char.match /\w|-|\.|\?|\//
         symbol << cursor
       end
       symbol
