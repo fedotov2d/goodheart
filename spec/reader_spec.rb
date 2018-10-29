@@ -31,6 +31,12 @@ RSpec.describe Clojure::Reader do
     expect(r.ast).to eq ["vector"]
   end
 
+  it "skip comment correct" do
+    r = described_class.new " vector ;; it's a vector dude "
+    expect(r.ast).to eq ["vector"]
+  end
+
+
   it "read keyword correct" do
     r = described_class.new " :name "
     expect(r.ast).to eq [:name]

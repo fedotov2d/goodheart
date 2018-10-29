@@ -38,6 +38,7 @@ module Clojure
       when :eof then return
       when /\s/ then skip_char
       when /\,/ then skip_char
+      when /\;/ then skip_comment
       when /\d/ then read_number
       when /\(/ then read_form
       when /\[/ then read_form till: "]", into: ["vector"]
@@ -51,6 +52,11 @@ module Clojure
 
     def skip_char
       next_char
+      nil
+    end
+
+    def skip_comment
+      next_char until cursor == "\n" || eof?
       nil
     end
 
