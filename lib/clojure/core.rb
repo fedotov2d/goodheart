@@ -31,9 +31,12 @@ module Clojure
     define "count", ->(_ctx, args) { (args[0] || []).length }
     define "get", ->(_ctx, args) { args[0][args[1]] || args[2] }
 
-    define "def", ->(ctx, args) { ctx[args[0]] = args[1] }
+    define "def", (lambda do |ctx, args|
+      ctx[args[0]] = args[1]
+      "#{ctx["*ns*"]}/#{args[0]}"
+    end)
 
-    define "ns", ->(ctx, args) { self["def"][ctx, ["*ns*", args[0]]] }
+    define "ns", ->(ctx, args) { self["def"][ctx, ["*ns*", args[0]]]; nil }
 
     define "fn", (lambda do |ctx, args|
       # TODO: poor implementation
