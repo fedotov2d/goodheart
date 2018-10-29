@@ -57,4 +57,10 @@ RSpec.describe Clojure::Core do
     described_class["def"][ns, %w[a b]]
     expect(ns["a"]).to eq "b"
   end
+
+  it "defn" do
+    ns = Clojure::Namespace.new
+    described_class["defn"][ns, ["sum", %w[vector a b], %w[+ a b]]]
+    expect(ns["sum"].call({}, [1, 2])).to eq 3
+  end
 end

@@ -18,6 +18,7 @@ module Clojure
     define "def", ->(ctx, args) { ctx[args[0]] = args[1] }
 
     define "fn", (lambda do |ctx, args|
+      # TODO: poor implementation
       lambda do |_ctx, fn_args|
         params = args[0][1..-1].zip(fn_args)
         fn_ctx = ctx.merge(Hash[params])
@@ -26,5 +27,7 @@ module Clojure
         end.last
       end
     end)
+
+    define "defn", ->(ctx, args) { self['def'].call(ctx, [args[0], self['fn'].call(ctx, args[1..-1])]) }
   end
 end
