@@ -1,0 +1,26 @@
+name: "Valid team"
+members:
+  - name: "Vincent"
+    age: 51
+    roles: ["captain"]
+  - name: "Leon"
+    age: 54
+    roles: ["engineer"]
+  - name: "Said"
+    age: 43
+    roles: ["navigator"]
+  - name: "Ivan"
+    age: 22
+    roles: ["sailor"]
+  - name: "Hans"
+    age: 37
+    roles: ["motorman"]
+  - name: "Wojciech"
+    age: 26
+    roles: ["radioman"]
+  - name: "Farid"
+    age: 34
+    roles: ["cook"]
+  - name: "Saito"
+    age: 29
+    roles: ["harpooner"]
