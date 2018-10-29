@@ -13,7 +13,13 @@ module Clojure
     define "hash-map", ->(_ctx, args) { Hash[*args] }
 
     define "str", ->(_ctx, args) { args.map(&:to_s).join }
-    define "quote", ->(_ctx, args) { args }
+    define "quote", ->(_ctx, args) { args.first }
+
+    define "not", ->(_ctx, args) { not args }
+    define "count", ->(_ctx, args) { (args[0] || []).length }
+    define "get", ->(_ctx, args) { args[0][args[1]] || args[2] }
+
+    define "ns", ->(ctx, args) { nil } # TODO: implement ns support
 
     define "def", ->(ctx, args) { ctx[args[0]] = args[1] }
 

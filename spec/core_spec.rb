@@ -39,11 +39,29 @@ RSpec.describe Clojure::Core do
   end
 
   it "quote" do
-    expect(described_class["quote"][{}, %w[good heart]]).to eq %w[good heart]
+    expect(described_class["quote"][{}, ["good heart"]]).to eq "good heart"
   end
 
   it "str" do
     expect(described_class["str"][{}, %w[good heart]]).to eq "goodheart"
+    expect(described_class["str"][{}, ["good heart"]]).to eq "good heart"
+  end
+
+  it "not" do
+    expect(described_class["not"][{}, true]).to be false
+    expect(described_class["not"][{}, false]).to be true
+  end
+
+  it "get" do
+    expect(described_class["get"][{}, [[1, 2, 3], 2]]).to eq 3
+    expect(described_class["get"][{}, [{a: 1, b: 2}, :b]]).to eq 2
+  end
+
+  it "count" do
+    expect(described_class["count"][{}, [%w[good heart]]]).to eq 2
+    expect(described_class["count"][{}, [[]]]).to eq 0
+    expect(described_class["count"][{}, ["four"]]).to eq 4
+    expect(described_class["count"][{}, [""]]).to eq 0
   end
 
   it "fn" do

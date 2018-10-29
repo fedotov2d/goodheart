@@ -2,6 +2,9 @@ module Clojure
   class Namespace < Hash
     # Clojure's ns | evaluation context | class
 
+    # calls woth postponed evaluation of expression
+    SPECIAL = %w[fn defn def quote].freeze
+
     def evaluate(form)
       case form
       when Array
@@ -23,7 +26,12 @@ module Clojure
       name, *expressions = form
       fn = resolve name
       raise Exception, "Function #{name} not defined" unless fn
-      fn.call self, expressions.map { |f| evaluate f }
+      args = if SPECIAL.include?(name)
+        expressions
+      else
+        expressions.map { |f| evaluate f }
+      end
+      fn.call self, args
     end
   end
 end
