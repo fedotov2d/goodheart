@@ -1,0 +1,12 @@
+name: ""
+members:
+  - name: ""
+    age: 11
+    roles: ["someone"]
+  - name: "Hey Man!"
+    age: 0
+    roles: "king dude"
+  - name: "Grisha"
+    age: "100500"
+    roles: []
+its: crazy
