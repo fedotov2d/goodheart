@@ -19,4 +19,17 @@ RSpec.describe "Shared validation on Clojure" do
         expect(ns.evaluate ["simple-validate", invalid_data]).to be false
       end
     end
+
+    context "advanced" do
+      it "valid data" do
+        errors = ns.evaluate ["advanced-validate", valid_data]
+        expect(errors).to be_empty
+      end
+
+      it "invalid data" do
+        errors = ns.evaluate ["advanced-validate", invalid_data]
+        expect(errors).to include "Team name should be present"
+        expect(errors).to include "Team should be greater than three members"
+      end
+    end
 end
