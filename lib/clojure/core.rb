@@ -5,9 +5,9 @@ module Clojure
     define "*", ->(_ctx, args) { args.reduce(:*) }
     define "/", ->(_ctx, args) { args.reduce(:/) }
 
-    define "=", ->(_ctx, args) { !!args.reduce { |x,y| x == y ? x : break } }
-    define ">", ->(_ctx, args) { !!args.reduce { |x,y| x >  y ? x : break } }
-    define "<", ->(_ctx, args) { !!args.reduce { |x,y| x <  y ? x : break } }
+    define "=", ->(_ctx, args) { !!args.reduce { |x, y| x == y ? x : break } }
+    define ">", ->(_ctx, args) { !!args.reduce { |x, y| x >  y ? x : break } }
+    define "<", ->(_ctx, args) { !!args.reduce { |x, y| x <  y ? x : break } }
 
     define "vector", ->(_ctx, args) { Array[*args] }
     define "hash-map", ->(_ctx, args) { Hash[*args] }
@@ -24,8 +24,8 @@ module Clojure
     end)
 
     define "if", (lambda do |ctx, args|
-     clause, then_expr, else_expr = args
-     ctx.evaluate(clause) ? then_expr : else_expr
+      clause, then_expr, else_expr = args
+      ctx.evaluate(clause) ? then_expr : else_expr
     end)
     define "when", ->(ctx, args) { self["if"][ctx, [*args[0..1], nil]] }
     define "when-not", ->(ctx, args) { self["if"][ctx, [args[0], nil, args[1]]] }
