@@ -1,8 +1,10 @@
-# Goodheart
+# Good Heart
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/goodheart`. To experiment with that code, run `bin/console` for an interactive prompt.
+Clojure interpreter on pure Ruby.
 
-TODO: Delete this and the text above, and describe your gem
+_**The Wizard of Oz:** As for you, my galvanized friend, you want a heart. You don't know how lucky you are not to have one. Hearts will never be practical until they can be made unbreakable._
+
+_**The Tin Man:** But, I... I still want one._
 
 ## Installation
 
@@ -22,7 +24,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require "goodheart"
+
+runtime = Clojure::Runtime.new
+runtime.load("shared_validation.clj")
+runtime.namespace("validation").evaluate(["validate", data])
+```
 
 ## Development
 
