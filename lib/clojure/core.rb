@@ -25,7 +25,7 @@ module Clojure
 
     define "if", (lambda do |ctx, args|
      clause, then_expr, else_expr = args
-     ctx.evaluate ctx.evaluate(clause) ? then_expr : else_expr
+     ctx.evaluate(clause) ? then_expr : else_expr
     end)
     define "when", ->(ctx, args) { self["if"][ctx, [*args[0..1], nil]] }
     define "when-not", ->(ctx, args) { self["if"][ctx, [args[0], nil, args[1]]] }
