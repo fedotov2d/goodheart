@@ -15,9 +15,15 @@ module Clojure
 
     private
 
+    def resolve(symbol)
+      self[symbol] || Clojure::Core[symbol]
+    end
+
     def form_eval(form)
-      fn = self[form.first] || Clojure::Core[form.first]
-      fn.call self, form[1..-1].map { |f| evaluate f }
+      name, *expressions = form
+      fn = resolve name
+      raise Exception, "Function #{name} not defined" unless fn
+      fn.call self, expressions.map { |f| evaluate f }
     end
   end
 end

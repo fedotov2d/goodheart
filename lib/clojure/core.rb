@@ -14,5 +14,15 @@ module Clojure
 
     define "str", ->(_ctx, args) { args.map(&:to_s).join }
     define "quote", ->(_ctx, args) { args }
+
+    define "fn", (lambda do |ctx, args|
+      lambda do |_ctx, fn_args|
+        params = args[0][1..-1].zip(fn_args)
+        fn_ctx = ctx.merge(Hash[params])
+        args[1..-1].map do |form|
+          fn_ctx.evaluate form
+        end.last
+      end
+    end)
   end
 end
