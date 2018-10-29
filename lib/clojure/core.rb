@@ -45,11 +45,11 @@ module Clojure
     end)
 
     define "def", (lambda do |ctx, args|
-      ctx[args[0]] = args[1]
+      ctx[args[0]] = ctx.evaluate args[1]
       "#{ctx["*ns*"]}/#{args[0]}"
     end)
 
-    define "ns", ->(ctx, args) { self["def"][ctx, ["*ns*", args[0]]]; nil }
+    define "ns", ->(ctx, args) { self["def"][ctx, ["*ns*", ["quote", args[0]]]]; nil }
 
     define "fn", (lambda do |ctx, args|
       # TODO: poor implementation

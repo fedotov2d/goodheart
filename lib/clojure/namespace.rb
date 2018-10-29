@@ -23,10 +23,15 @@ module Clojure
     end
 
     def form_eval(form)
-      name, *expressions = form
-      fn = resolve name
-      raise Exception, "Function #{name} not defined" unless fn
-      args = if SPECIAL.include?(name)
+      head, *expressions = form
+      fn = case head
+      when Array
+        form_eval head
+      else
+        resolve head
+      end
+      raise Exception, "Function #{head} not defined" unless fn
+      args = if head.is_a?(String) && SPECIAL.include?(head)
         expressions
       else
         expressions.map { |f| evaluate f }

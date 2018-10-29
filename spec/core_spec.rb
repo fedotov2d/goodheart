@@ -113,8 +113,8 @@ RSpec.describe Clojure::Core do
   end
 
   it "def" do
-    described_class["def"][ns, %w[a b]]
-    expect(ns["a"]).to eq "b"
+    described_class["def"][ns, ["a", 1]]
+    expect(ns["a"]).to eq 1
   end
 
   it "defn" do
