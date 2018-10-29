@@ -38,6 +38,11 @@ module Clojure
       coll.map { |i| fn[ctx, [i]] }
     end)
 
+    define "filter", (lambda do |ctx, args|
+      fn, coll = args
+      coll.select { |i| fn[ctx, [i]] }
+    end)
+
     define "remove", (lambda do |ctx, args|
       fn, coll = args
       new_coll = coll.dup
