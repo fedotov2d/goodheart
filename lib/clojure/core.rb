@@ -16,6 +16,18 @@ module Clojure
     define "quote", ->(_ctx, args) { args.first }
 
     define "not", ->(_ctx, args) { not args }
+
+    define "and", ->(ctx, args) { args.map { |form| ctx.evaluate form }.all? }
+    define "or", (lambda do |ctx, args|
+      args.find { |form| !!ctx.evaluate(form) }
+    end)
+
+    define "if", (lambda do |ctx, args|
+     clause, then_expr, else_expr = args
+     ctx.evaluate ctx.evaluate(clause) ? then_expr : else_expr
+    end)
+    define "when", ->(ctx, args) { self["if"][ctx, [*args[0..1], nil]] }
+
     define "count", ->(_ctx, args) { (args[0] || []).length }
     define "get", ->(_ctx, args) { args[0][args[1]] || args[2] }
 
