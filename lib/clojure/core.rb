@@ -15,6 +15,8 @@ module Clojure
     define "str", ->(_ctx, args) { args.map(&:to_s).join }
     define "quote", ->(_ctx, args) { args }
 
+    define "def", ->(ctx, args) { ctx[args[0]] = args[1] }
+
     define "fn", (lambda do |ctx, args|
       lambda do |_ctx, fn_args|
         params = args[0][1..-1].zip(fn_args)

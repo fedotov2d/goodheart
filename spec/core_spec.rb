@@ -51,4 +51,10 @@ RSpec.describe Clojure::Core do
     fn = described_class["fn"][ns, [%w[vector a b], %w[+ a b]]]
     expect(fn.call({}, [1, 2])).to eq 3
   end
+
+  it "def" do
+    ns = Clojure::Namespace.new
+    described_class["def"][ns, %w[a b]]
+    expect(ns["a"]).to eq "b"
+  end
 end
