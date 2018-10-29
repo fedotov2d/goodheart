@@ -101,4 +101,9 @@ RSpec.describe Clojure::Core do
     described_class["defn"][ns, ["sum", %w[vector a b], %w[+ a b]]]
     expect(ns["sum"].call(ns, [1, 2])).to eq 3
   end
+
+  it "ns" do
+    described_class["ns"][ns, ["main"]]
+    expect(ns["*ns*"]).to eq "main"
+  end
 end

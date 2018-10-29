@@ -3,7 +3,7 @@ module Clojure
     # Clojure's ns | evaluation context | class
 
     # calls woth postponed evaluation of expression
-    SPECIAL = %w[fn defn def quote].freeze
+    SPECIAL = %w[ns fn defn def quote].freeze
 
     def evaluate(form)
       case form
