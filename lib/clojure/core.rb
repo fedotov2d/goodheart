@@ -38,6 +38,7 @@ module Clojure
       coll.map { |i| fn[ctx, [i]] }
     end)
 
+    define "distinct", ->(_ctx, args) { (args[0] || []).uniq }
     define "remove", (lambda do |ctx, args|
       fn, coll = args
       new_coll = coll.dup
