@@ -54,6 +54,11 @@ RSpec.describe Clojure::Core do
     expect(described_class["not"][ns, false]).to be true
   end
 
+  it "nil?" do
+    expect(described_class["nil?"][ns, [1]]).to be false
+    expect(described_class["nil?"][ns, [nil]]).to be true
+  end
+
   it "and" do
     expect(described_class["and"][ns, [1, 2, 3]]).to be true
     expect(described_class["and"][ns, [1, 2, nil]]).to be false
@@ -73,6 +78,21 @@ RSpec.describe Clojure::Core do
   it "when" do
     expect(described_class["when"][ns, [true, 1]]).to be 1
     expect(described_class["when"][ns, [nil, 1]]).to be nil
+  end
+
+  it "when-not" do
+    expect(described_class["when-not"][ns, [true, 1]]).to be nil
+    expect(described_class["when-not"][ns, [nil, 1]]).to be 1
+  end
+
+  it "map" do
+    ns["func"] = ->(ctx, args) { args[0] * 2 }
+    expect(described_class["map"][ns, [ns.evaluate("func"), [1, 2, 3]]]).to eq [2, 4, 6]
+  end
+
+  it "remove" do
+    expect(described_class["remove"][ns, [ns.evaluate("nil?"), [2, nil, 6]]]).to eq [2, 6]
+    expect(described_class["remove"][ns, [ns.evaluate("nil?"), [nil, nil]]]).to be_empty
   end
 
   it "get" do

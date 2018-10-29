@@ -16,6 +16,7 @@ module Clojure
     define "quote", ->(_ctx, args) { args.first }
 
     define "not", ->(_ctx, args) { not args }
+    define "nil?", ->(_ctx, args) { args.first.nil? }
 
     define "and", ->(ctx, args) { args.map { |form| ctx.evaluate form }.all? }
     define "or", (lambda do |ctx, args|
@@ -27,9 +28,21 @@ module Clojure
      ctx.evaluate ctx.evaluate(clause) ? then_expr : else_expr
     end)
     define "when", ->(ctx, args) { self["if"][ctx, [*args[0..1], nil]] }
+    define "when-not", ->(ctx, args) { self["if"][ctx, [args[0], nil, args[1]]] }
 
     define "count", ->(_ctx, args) { (args[0] || []).length }
     define "get", ->(_ctx, args) { args[0][args[1]] || args[2] }
+
+    define "map", (lambda do |ctx, args|
+      fn, coll = args
+      coll.map { |i| fn[ctx, [i]] }
+    end)
+
+    define "remove", (lambda do |ctx, args|
+      fn, coll = args
+      new_coll = coll.dup
+      new_coll.delete_if { |i| fn[ctx, [i]] }
+    end)
 
     define "def", (lambda do |ctx, args|
       ctx[args[0]] = args[1]
