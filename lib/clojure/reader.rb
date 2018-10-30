@@ -61,8 +61,6 @@ module Clojure
     end
 
     def read_form(till: ")", into: [])
-      # puts "reading form"
-      # puts "-> #{cursor}"
       opening = cursor
       skip_char # opening parenthesis
       ast = into

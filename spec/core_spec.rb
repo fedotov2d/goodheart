@@ -112,6 +112,10 @@ RSpec.describe Clojure::Core do
     expect(described_class["count"][ns, [""]]).to eq 0
   end
 
+  it "distinct" do
+    expect(described_class["distinct"][ns, [%w[good heart good]]]).to eq %w[good heart]
+  end
+
   it "fn" do
     fn = described_class["fn"][ns, [%w[vector a b], %w[+ a b]]]
     expect(fn.call(ns, [1, 2])).to eq 3
