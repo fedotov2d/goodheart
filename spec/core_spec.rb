@@ -90,6 +90,11 @@ RSpec.describe Clojure::Core do
     expect(described_class["map"][ns, [ns.evaluate("func"), [1, 2, 3]]]).to eq [2, 4, 6]
   end
 
+  it "filter" do
+    ns["func"] = ->(_ctx, args) { args[0].even? }
+    expect(described_class["filter"][ns, [ns.evaluate("func"), [1, 2, 3, 4]]]).to eq [2, 4]
+  end
+
   it "remove" do
     expect(described_class["remove"][ns, [ns.evaluate("nil?"), [2, nil, 6]]]).to eq [2, 6]
     expect(described_class["remove"][ns, [ns.evaluate("nil?"), [nil, nil]]]).to be_empty
