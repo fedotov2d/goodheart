@@ -19,6 +19,7 @@ _**The Tin Man:** But, I... I still want one._
 - [x] Closures
 - [ ] Many namespaces
 - [ ] Full clojure.core
+- [ ] Repl
 - [ ] A lot of other things...
 
 ## Installation
