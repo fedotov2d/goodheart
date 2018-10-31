@@ -6,6 +6,21 @@ _**The Wizard of Oz:** As for you, my galvanized friend, you want a heart. You d
 
 _**The Tin Man:** But, I... I still want one._
 
+## For what?
+1. It's just awesome.
+2. Share logic between Clojure and Ruby apps in stack.
+2. Gradually migrate from Ruby to Clojure (or back).
+3. Ability to create some tooling for Clojure on Ruby. 
+
+# Roadmap bird-eye view
+- [x] Read Clojure into Ruby's data structures
+- [x] Evaluate AST
+- [x] High-order functions
+- [x] Closures
+- [ ] Many namespaces
+- [ ] Full clojure.core
+- [ ] A lot of other things...
+
 ## Installation
 
 Add this line to your application's Gemfile:
