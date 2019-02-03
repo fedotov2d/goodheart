@@ -5,7 +5,7 @@ module Clojure
     end
 
     def namespace(name)
-      @namespaces[name] || @namespaces[name] = Clojure::Namespace.new(self)
+      @namespaces[name] ||= Clojure::Namespace.new
     end
 
     def load(filename)
