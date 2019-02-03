@@ -5,11 +5,11 @@ module Clojure
     end
 
     def namespace(name)
-      @namespaces[name] || @namespaces[name] = Clojure::Namespace.new
+      @namespaces[name] || @namespaces[name] = Clojure::Namespace.new(self)
     end
 
     def load(filename)
-      ns = Clojure::Namespace.new
+      ns = Clojure::Namespace.new(self)
       source = open(filename).read
       ast = Clojure::Reader.new(source).ast
       ast.each { |form| ns.evaluate form }

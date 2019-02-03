@@ -1,5 +1,5 @@
 RSpec.describe Clojure::Core do
-  let(:ns) { Clojure::Namespace.new }
+  let(:ns) { Clojure::Namespace.new({}) }
 
   it "+" do
     expect(described_class["+"][ns, [1, 2, 3]]).to eq 6

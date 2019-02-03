@@ -2,6 +2,12 @@ module Clojure
   class Namespace < Hash
     # Clojure's ns | evaluation context | class
 
+    def initialize(runtime)
+      @runtime = runtime
+    end
+
+    attr_reader :runtime
+
     # calls woth postponed evaluation of expression
     SPECIAL = %w[ns fn defn def quote].freeze
 

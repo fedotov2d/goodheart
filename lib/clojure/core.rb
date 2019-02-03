@@ -51,7 +51,28 @@ module Clojure
 
     define "byebug", ->(ctx, args) { byebug }
 
-    define "ns", ->(ctx, args) { self["def"][ctx, ["*ns*", ["quote", args[0]]]]; nil }
+    define "ns", (lambda do |ctx, args|
+      self["def"][ctx, ["*ns*", ["quote", args[0]]]]
+      if args[1] && args[1][0] == :require
+        args[1][1..-1].each do |refer|
+          ns = refer[1].to_sym
+          binds = Hash[*refer[2..-1]]
+          bindings = {}
+          bindings[binds[:as]] = [ns] if binds[:as]
+          if binds[:refer]
+            binds[:refer].each do |ref|
+              bindings[ref] = [ns, ref]
+            end
+          end
+          bindings.each do |k, v|
+            ctx[k] = Clojure::Alias.new do
+              -> { ctx.runtime.namespaces.dig *v }
+            end
+          end
+        end
+      end
+      nil
+    end)
 
     define "fn", (lambda do |ctx, args|
       # TODO: poor implementation
