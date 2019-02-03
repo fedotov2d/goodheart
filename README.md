@@ -17,8 +17,10 @@ _**The Tin Man:** But, I... I still want one._
 - [x] Evaluate AST
 - [x] High-order functions
 - [x] Closures
-- [ ] Many namespaces
+- [x] Many namespaces
+- [ ] Macroses
 - [ ] Full clojure.core
+- [ ] Full core.async
 - [ ] Repl
 - [ ] A lot of other things...
 
