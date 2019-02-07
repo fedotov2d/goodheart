@@ -63,6 +63,10 @@ RSpec.describe Clojure::Core do
     expect(described_class["let"][ns, [["vector", "a", 2, "b", 3], ["+", "a", "b"]]]).to be 5
   end
 
+  it "for" do
+    expect(described_class["for"][ns, [["vector", "a", ["vector", 1, 2, 3]], ["+", "a", "a"]]]).to match_array [2, 4, 6]
+  end
+
   it "and" do
     expect(described_class["and"][ns, [1, 2, 3]]).to be true
     expect(described_class["and"][ns, [1, 2, nil]]).to be false

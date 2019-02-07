@@ -30,6 +30,17 @@ module Clojure
       end.last
     end)
 
+    define "for", (lambda do |ctx, forms|
+      head, expr, extra = *forms
+      raise Exception, "Wrong number of args passed to: core/for" if extra
+      key = head[1]
+      col = ctx.evaluate head[2]
+      col.map do |i|
+        fctx = ctx.merge key => i
+        fctx.evaluate expr
+      end
+    end)
+
     define "and", ->(ctx, args) { args.map { |form| ctx.evaluate form }.all? }
     define "or", (lambda do |ctx, args|
       args.find { |form| !!ctx.evaluate(form) }
