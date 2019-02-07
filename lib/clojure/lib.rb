@@ -7,6 +7,10 @@ module Clojure
         @@ns[name]
       end
 
+      def dig name
+        @@ns[name]
+      end
+
       def define(name, value)
         @@ns[name] = value
       end

@@ -10,6 +10,10 @@ module Clojure
       @namespaces[name] ||= Clojure::Namespace.new(self)
     end
 
+    def include(lib)
+      @namespaces[lib.name.downcase.gsub("::", ".").to_sym] = lib
+    end
+
     def load(filename)
       ns = Clojure::Namespace.new(self)
       source = open(filename).read
