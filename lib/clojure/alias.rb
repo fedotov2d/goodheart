@@ -7,5 +7,9 @@ module Clojure
     def lookup
       @lookup.call
     end
+
+    def call(ctx, args)
+      lookup.call ctx, args
+    end
   end
 end

@@ -18,6 +18,18 @@ module Clojure
     define "not", ->(_ctx, args) { not args }
     define "nil?", ->(_ctx, args) { args.first.nil? }
 
+    define "let", (lambda do |ctx, forms|
+      # skip "vector" from params
+      bindings = forms[0][1..-1]
+      lctx = ctx.dup
+      bindings.each_slice(2) do |k, v|
+        lctx[k] = lctx.evaluate(v)
+      end
+      forms[1..-1].map do |f|
+        lctx.evaluate(f)
+      end.last
+    end)
+
     define "and", ->(ctx, args) { args.map { |form| ctx.evaluate form }.all? }
     define "or", (lambda do |ctx, args|
       args.find { |form| !!ctx.evaluate(form) }
@@ -38,12 +50,10 @@ module Clojure
       coll.map { |i| fn[ctx, [i]] }
     end)
 
-
     define "filter", (lambda do |ctx, args|
       fn, coll = args
       coll.select { |i| fn[ctx, [i]] }
     end)
-
 
     define "distinct", ->(_ctx, args) { (args[0] || []).uniq }
 
@@ -69,7 +79,7 @@ module Clojure
           bindings = {}
           bindings[binds[:as]] = [ns] if binds[:as]
           if binds[:refer]
-            binds[:refer].each do |ref|
+            binds[:refer][1..-1].each do |ref|
               bindings[ref] = [ns, ref]
             end
           end

@@ -42,7 +42,11 @@ module Clojure
              else
                expressions.map { |f| evaluate f }
              end
-      fn.call self, args
+      begin
+        fn.call self, args
+      rescue
+        binding.pry
+      end
     end
   end
 end

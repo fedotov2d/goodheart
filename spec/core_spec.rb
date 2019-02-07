@@ -59,6 +59,10 @@ RSpec.describe Clojure::Core do
     expect(described_class["nil?"][ns, [nil]]).to be true
   end
 
+  it "let" do
+    expect(described_class["let"][ns, [["vector", "a", 2, "b", 3], ["+", "a", "b"]]]).to be 5
+  end
+
   it "and" do
     expect(described_class["and"][ns, [1, 2, 3]]).to be true
     expect(described_class["and"][ns, [1, 2, nil]]).to be false

@@ -4,6 +4,8 @@ module Clojure
       @namespaces = {}
     end
 
+    attr_reader :namespaces
+
     def namespace(name)
       @namespaces[name] ||= Clojure::Namespace.new(self)
     end
