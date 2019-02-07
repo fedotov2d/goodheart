@@ -33,6 +33,9 @@ module Clojure
       fn = case head
            when Array
              form_eval head
+           when Symbol
+             # dirty keyword IFn
+             -> (_ctx, args) { args[0][head] }
            else
              resolve head
            end
