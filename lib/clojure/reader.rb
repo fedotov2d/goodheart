@@ -46,8 +46,22 @@ module Clojure
       when /\:/ then read_keyword
       when /\"/ then read_string
       when /\'/ then read_quote
+      when /\#/ then read_special
       when /\S/ then read_symbol
       end
+    end
+
+    def read_special
+      case next_char
+      when /\_/ then read_sexp_comment
+      else raise Exception, "Unknown token: ##{cur}"
+      end
+    end
+
+    def read_sexp_comment
+      next_char
+      read_next
+      nil
     end
 
     def skip_char

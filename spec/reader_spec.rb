@@ -13,6 +13,11 @@ RSpec.describe Clojure::Reader do
     expect(r.ast).to eq [["vector", 1, 2, 3]]
   end
 
+  it "read sexp-comment correct" do
+    r = described_class.new "[1 #_(2) 3]"
+    expect(r.ast).to eq [["vector", 1, 3]]
+  end
+
   it "raise exception on unbalanced vector" do
     expect { described_class.new "[123 [" }.to raise_error(Exception, "Unbalanced []")
   end
