@@ -81,6 +81,22 @@ module Clojure
 
     define "byebug", ->(ctx, args) { byebug }
 
+    define "merge", (lambda do |ctx, args|
+      coll = ctx.evaluate args[0]
+      args[1..-1].each do |arg|
+        coll.merge! ctx.evaluate(arg)
+      end
+      coll
+    end)
+
+    define "first", (lambda do |ctx, args|
+      args.first.first
+    end)
+
+    define "rest", (lambda do |ctx, args|
+      args.first[1..-1]
+    end)
+
     define "ns", (lambda do |ctx, args|
       self["def"][ctx, ["*ns*", ["quote", args[0]]]]
       if args[1] && args[1][0] == :require
@@ -96,7 +112,7 @@ module Clojure
           end
           bindings.each do |k, v|
             ctx[k] = Clojure::Alias.new do
-              -> { ctx.runtime.namespaces.dig *v }
+              -> { ctx.runtime.namespaces.dig(*v) }
             end
           end
         end

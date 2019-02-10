@@ -67,6 +67,18 @@ RSpec.describe Clojure::Core do
     expect(described_class["for"][ns, [["vector", "a", ["vector", 1, 2, 3]], ["+", "a", "a"]]]).to match_array [2, 4, 6]
   end
 
+  it "merge" do
+    expect(described_class["merge"][ns, [["hash-map", :a, 1], ["hash-map", :b, 2]]]).to include({a: 1, b: 2})
+  end
+
+  it "first" do
+    expect(described_class["first"][ns, [[:a, 1, :b, 2]]]).to be :a
+  end
+
+  it "rest" do
+    expect(described_class["rest"][ns, [[:a, 1, :b, 2]]]).to match_array [1, :b, 2]
+  end
+
   it "and" do
     expect(described_class["and"][ns, [1, 2, 3]]).to be true
     expect(described_class["and"][ns, [1, 2, nil]]).to be false
