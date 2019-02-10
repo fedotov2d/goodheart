@@ -18,6 +18,10 @@ module Clojure
     define "not", ->(_ctx, args) { not args }
     define "nil?", ->(_ctx, args) { args.first.nil? }
 
+    define "do", ->(_ctx, args) { args.map { |f| ctx.evaluate f } }
+
+    define "subs", ->(ctx, args) { (ctx.evaluate(args[0]))[ctx.evaluate(args[1])..(ctx.evaluate(args[2]) || -1)] }
+
     define "let", (lambda do |ctx, forms|
       # skip "vector" from params
       bindings = forms[0][1..-1]
@@ -87,6 +91,12 @@ module Clojure
         coll.merge! ctx.evaluate(arg)
       end
       coll
+    end)
+
+    define "assoc", (lambda do |ctx, args|
+      coll = ctx.evaluate args[0]
+      pairs = args[1..-1].map { |x| ctx.evaluate x }
+      coll.merge(Hash[*pairs])
     end)
 
     define "first", (lambda do |ctx, args|

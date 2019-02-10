@@ -71,8 +71,16 @@ RSpec.describe Clojure::Core do
     expect(described_class["merge"][ns, [["hash-map", :a, 1], ["hash-map", :b, 2]]]).to include({a: 1, b: 2})
   end
 
+  it "assoc" do
+    expect(described_class["assoc"][ns, [["hash-map", :a, 1], :b, 2, :c, 3]]).to include({a: 1, b: 2, c: 3})
+  end
+
   it "first" do
     expect(described_class["first"][ns, [[:a, 1, :b, 2]]]).to be :a
+  end
+
+  it "subs" do
+    expect(described_class["subs"][ns, [["str", ["quote", "qwert"]], 1, 3]]).to eq "wer"
   end
 
   it "rest" do
