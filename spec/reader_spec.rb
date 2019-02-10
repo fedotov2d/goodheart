@@ -48,8 +48,8 @@ RSpec.describe Clojure::Reader do
   end
 
   it "read string correct" do
-    r = described_class.new " \"hello\" "
-    expect(r.ast).to eq [["str", ["quote", "hello"]]]
+    r = described_class.new "\"Hello my dear friend\\nI'm happy to use \\\"escape symbols\\\" (\\) !\""
+    expect(r.ast).to eq [["str", ["quote", "Hello my dear friend\\nI'm happy to use \"escape symbols\" (\\) !"]]]
   end
 
   it "read empty string correct" do

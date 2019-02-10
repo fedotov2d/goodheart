@@ -110,15 +110,32 @@ module Clojure
     end
 
     def read_string
-      s = ""
-      s << cursor until next_char == '"'
+      next_char
+      if cursor == '"'
+        next_char
+        return ['str', ['quote', '']]
+      end
+      s = cursor.dup
+      prev = cursor
+      until (next_char == '"' && prev != "\\")
+        p "-- #{prev} #{cursor}"
+        if cursor == "\\"
+        elsif cursor == "\""
+          s << cursor
+        elsif prev == "\\"
+          s << "\\#{cursor}"
+        else
+          s << cursor
+        end
+        prev = cursor
+      end
       next_char
       ['str', ['quote', s]]
     end
 
     def read_symbol
       symbol = cursor
-      while next_char.match /\w|-|\.|\?|\+|\//
+      while next_char.match(/\w|-|\.|\?|\+|\//)
         symbol << cursor
       end
       symbol
