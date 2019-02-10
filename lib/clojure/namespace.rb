@@ -25,7 +25,18 @@ module Clojure
     private
 
     def resolve(symbol)
-      self[symbol] || Clojure::Core[symbol]
+      n, ns = symbol.split('/').reverse
+      i = self[ns] || self[n] || Clojure::Core[symbol] || raise("Can't resolve #{symbol}.")
+      case i
+      when Clojure::Alias
+        if ns
+          i.lookup()[n]
+        else
+          i.lookup()
+        end
+      else
+        i
+      end
     end
 
     def form_eval(form)
