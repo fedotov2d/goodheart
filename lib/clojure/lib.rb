@@ -2,7 +2,7 @@ module Clojure
   module Library
 
     def ns
-      @@ns ||= {}
+      @ns ||= {}
     end
 
     def [] name
