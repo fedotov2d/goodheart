@@ -1,19 +1,20 @@
 module Clojure
-  class Lib
-    @@ns = {}
+  module Library
 
-    class << self
-      def [] name
-        @@ns[name]
-      end
+    def ns
+      @@ns ||= {}
+    end
 
-      def dig name
-        @@ns[name]
-      end
+    def [] name
+      ns[name]
+    end
 
-      def define(name, value)
-        @@ns[name] = value
-      end
+    def dig name
+      ns[name]
+    end
+
+    def define(name, value)
+      ns[name] = value
     end
   end
 end

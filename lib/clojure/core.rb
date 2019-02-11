@@ -1,5 +1,7 @@
 module Clojure
-  class Core < Clojure::Lib
+  class Core
+    extend Library
+
     define "+", ->(_ctx, args) { args.reduce(:+) }
     define "-", ->(_ctx, args) { args.reduce(:-) }
     define "*", ->(_ctx, args) { args.reduce(:*) }
