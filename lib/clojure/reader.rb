@@ -118,7 +118,6 @@ module Clojure
       s = cursor.dup
       prev = cursor
       until (next_char == '"' && prev != "\\")
-        p "-- #{prev} #{cursor}"
         if cursor == "\\"
         elsif cursor == "\""
           s << cursor
