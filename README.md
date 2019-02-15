@@ -1,6 +1,6 @@
 # Good Heart
 
-Clojure interpreter on pure Ruby. Now supports only a small subset.
+Clojure interpreter on pure Ruby. Now supports only the small subset.
 
 _**The Wizard of Oz:** As for you, my galvanized friend, you want a heart. You don't know how lucky you are not to have one. Hearts will never be practical until they can be made unbreakable._
 
