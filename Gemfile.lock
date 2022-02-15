@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goodheart (0.3.8)
+    goodheart (0.4.9)
 
 GEM
   remote: https://rubygems.org/
@@ -34,4 +34,4 @@ DEPENDENCIES
   rspec (~> 3.0)
 
 BUNDLED WITH
-   2.2.29
+   2.2.30
