@@ -8,7 +8,7 @@ module Clojure
 
     attr_reader :runtime
 
-    # calls woth postponed evaluation of expression
+    # calls with postponed evaluation of expression
     SPECIAL = %w[ns fn defn def quote let for].freeze
 
     def evaluate(form)
