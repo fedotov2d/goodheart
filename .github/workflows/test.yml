@@ -1,0 +1,25 @@
+name: Repository Dispatch
+on:
+  repository_dispatch:
+    types: [test]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump the client payload context
+        env:
+          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
+        run: echo "$PAYLOAD_CONTEXT"
+
+      - uses: actions/checkout@v2
+        if: github.event.client_payload.ref != ''
+        with:
+          ref: ${{ github.event.client_payload.ref }}
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+
+      - name: Run test
+        run: bundle exec rspec
