@@ -12,10 +12,6 @@ jobs:
         run: echo "$PAYLOAD_CONTEXT"
 
       - uses: actions/checkout@v2
-        if: github.event.client_payload.ref != ''
-        with:
-          ref: ${{ github.event.client_payload.ref }}
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
