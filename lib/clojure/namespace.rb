@@ -44,6 +44,8 @@ module Clojure
     end
 
     def form_eval(form)
+      return [] if form.empty?
+
       head, *expressions = form
       fn = case head
            when Array

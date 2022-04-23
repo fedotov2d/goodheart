@@ -17,7 +17,12 @@ loop do
     puts "Bye for now!"
     break
   else
-    result = rt.read("user", line)
-    puts result
+    result = begin
+      rt.read("user", line)
+    rescue RuntimeError => e
+      e
+    end
+
+    puts result.inspect
   end
 end

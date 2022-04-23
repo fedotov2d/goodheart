@@ -17,6 +17,9 @@ Metrics/ClassLength:
 Metrics/BlockLength:
   Max: 256
 
+Metrics/CyclomaticComplexity:
+  Max: 8
+
 Layout/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
 
