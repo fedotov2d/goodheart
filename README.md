@@ -18,10 +18,10 @@ _**The Tin Man:** But, I... I still want one._
 - [x] High-order functions
 - [x] Closures
 - [x] Many namespaces
-- [ ] Macroses
+- [x] Repl
+- [ ] Macros
 - [ ] Full clojure.core
 - [ ] Full core.async
-- [ ] Repl
 - [ ] A lot of other things...
 
 ## Installation

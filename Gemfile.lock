@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goodheart (0.4.10)
+    goodheart (0.5.0)
 
 GEM
   remote: https://rubygems.org/
