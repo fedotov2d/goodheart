@@ -7,12 +7,12 @@ require "goodheart/version"
 Gem::Specification.new do |spec|
   spec.name          = "goodheart"
   spec.version       = Goodheart::VERSION
-  spec.authors       = ["cawcaw"]
-  spec.email         = ["dmitrygrach@gmail.com"]
+  spec.authors       = ["dimafedotov"]
+  spec.email         = ["fedotov2d@gmail.com"]
 
-  spec.summary       = "Clojure interpteter and runtime."
+  spec.summary       = "Clojure interpreter and runtime."
   spec.description   = "Good Heart allows you to put some Clojure right inside you Ruby application."
-  spec.homepage      = "https://github.com/cawcaw/goodheart"
+  spec.homepage      = "https://github.com/dimafedotov/goodheart"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -31,8 +31,8 @@ Gem::Specification.new do |spec|
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject {|f| f.match(%r{^(spec)/}) }
   end
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) {|f| File.basename(f) }
+  spec.bindir        = "bin"
+  spec.executables   = ["goodheart"]
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 2.2.29"
