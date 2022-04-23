@@ -1,16 +1,12 @@
-name: Repository Dispatch
+name: Run RSpec
+
 on:
-  repository_dispatch:
-    types: [test]
+  - push
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump the client payload context
-        env:
-          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
-        run: echo "$PAYLOAD_CONTEXT"
-
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
