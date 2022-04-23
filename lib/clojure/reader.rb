@@ -13,7 +13,6 @@ module Clojure
         r = read_next
         @ast << r if r
       end
-      true
     end
 
     def inspect
@@ -34,6 +33,8 @@ module Clojure
       @cursor = @io.getc || :eof
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/AbcSize
     def read_next
       # puts "reading next"
       # puts "-> #{cursor}"
@@ -44,8 +45,8 @@ module Clojure
       when /;/ then skip_comment
       when /\d/ then read_number
       when /\(/ then read_form
-      when /\[/ then read_form till: ']', into: ['vector']
-      when /\{/ then read_form till: '}', into: ['hash-map']
+      when /\[/ then read_form till: "]", into: ["vector"]
+      when /\{/ then read_form till: "}", into: ["hash-map"]
       when /:/ then read_keyword
       when /"/ then read_string
       when /'/ then read_quote
@@ -53,6 +54,8 @@ module Clojure
       when /\S/ then read_symbol
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/AbcSize
 
     def read_special
       case next_char
@@ -77,7 +80,7 @@ module Clojure
       nil
     end
 
-    def read_form(till: ')', into: [])
+    def read_form(till: ")", into: [])
       opening = cursor
       skip_char # opening parenthesis
       ast = into
@@ -110,22 +113,24 @@ module Clojure
 
     def read_quote
       skip_char # '
-      ['quote', read_next]
+      ["quote", read_next]
     end
 
+    # rubocop:disable Metrics/AbcSize
     def read_string
       next_char
       if cursor == '"'
         next_char
-        return ['str', ['quote', '']]
+        return ["str", ["quote", ""]]
       end
       s = cursor.dup
       prev = cursor
-      until next_char == '"' && prev != '\\'
-        if cursor == '\\'
+      until next_char == '"' && prev != "\\"
+        if cursor == "\\"
+          # no-op
         elsif cursor == '"'
           s << cursor
-        elsif prev == '\\'
+        elsif prev == "\\"
           s << "\\#{cursor}"
         else
           s << cursor
@@ -133,8 +138,9 @@ module Clojure
         prev = cursor
       end
       next_char
-      ['str', ['quote', s]]
+      ["str", ["quote", s]]
     end
+    # rubocop:enable Metrics/AbcSize
 
     def read_symbol
       symbol = cursor

@@ -6,6 +6,7 @@ module Clojure
 
     def initialize(runtime)
       @runtime = runtime
+      super
     end
 
     attr_reader :runtime
@@ -27,7 +28,7 @@ module Clojure
     private
 
     def resolve(symbol)
-      n, ns = symbol.split('/').reverse
+      n, ns = symbol.split("/").reverse
       i = self[ns] || self[n] || Clojure::Core[symbol] || raise("Can't resolve #{symbol}.")
       case i
       when Clojure::Alias
@@ -57,7 +58,7 @@ module Clojure
       args = if head.is_a?(String) && SPECIAL.include?(head)
                expressions
              else
-               expressions.map { |f| evaluate f }
+               expressions.map {|f| evaluate f }
              end
       fn.call self, args
     end

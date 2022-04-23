@@ -1,0 +1,54 @@
+AllCops:
+  Exclude:
+    - 'spec'
+
+Layout/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 24
+
+Metrics/ClassLength:
+  Max: 512
+
+Metrics/BlockLength:
+  Max: 256
+
+Layout/SpaceAroundEqualsInParameterDefault:
+  EnforcedStyle: no_space
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+
+Style/CollectionMethods:
+  Enabled: true
+  PreferredMethods:
+    reduce: "inject"
+
+Style/ParenthesesAroundCondition:
+  AllowSafeAssignment: false
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: false
+
+Style/RaiseArgs:
+  Enabled: false
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+Layout/SpaceInsideBlockBraces:
+  SpaceBeforeBlockParameters: false
+
+# Check with yard instead.
+Style/Documentation:
+  Enabled: false 
+
+Naming/BinaryOperatorParameterName:
+  Enabled: false 
+
+# Style preference
+Style/MethodDefParentheses:
+  Enabled: false
