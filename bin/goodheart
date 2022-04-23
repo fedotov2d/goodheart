@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "goodheart"
+
+rt = Clojure::Runtime.new
+rt.read("user", "(ns user)")
+
+loop do
+  print "\nuser => "
+  line = gets
+  result = rt.read("user", line)
+  puts result
+end

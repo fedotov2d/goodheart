@@ -39,18 +39,18 @@ module Clojure
       # puts "reading next"
       # puts "-> #{cursor}"
       case cursor
-      when :eof then nil
+      when :eof   then nil
       when /\s|,/ then skip_char
-      when /;/ then skip_comment
-      when /\d/ then read_number
-      when /\(/ then read_form
-      when /\[/ then read_form till: "]", into: ["vector"]
-      when /\{/ then read_form till: "}", into: ["hash-map"]
-      when /:/ then read_keyword
-      when /"/ then read_string
-      when /'/ then read_quote
-      when /\#/ then read_special
-      when /\S/ then read_symbol
+      when /;/    then skip_comment
+      when /\d/   then read_number
+      when /\(/   then read_form
+      when /\[/   then read_form till: "]", into: ["vector"]
+      when /\{/   then read_form till: "}", into: ["hash-map"]
+      when /:/    then read_keyword
+      when /"/    then read_string
+      when /'/    then read_quote
+      when /\#/   then read_special
+      when /\S/   then read_symbol
       else raise StandardError, "Unexpected symbol: #{cursor}"
       end
     end
