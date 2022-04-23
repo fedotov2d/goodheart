@@ -40,8 +40,7 @@ module Clojure
       # puts "-> #{cursor}"
       case cursor
       when :eof then nil
-      when /\s/ then skip_char
-      when /,/ then skip_char
+      when /\s|,/ then skip_char
       when /;/ then skip_comment
       when /\d/ then read_number
       when /\(/ then read_form
@@ -127,14 +126,12 @@ module Clojure
       s = cursor.dup
       prev = cursor
       until next_char == '"' && prev != "\\"
-        if cursor == "\\"
-          # no-op
-        elsif cursor == '"'
-          s << cursor
-        elsif prev == "\\"
-          s << "\\#{cursor}"
-        else
-          s << cursor
+        if cursor != "\\"
+          s << if prev == "\\" && cursor != '"'
+                 "\\#{cursor}"
+               else
+                 cursor
+               end
         end
         prev = cursor
       end

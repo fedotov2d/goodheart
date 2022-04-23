@@ -1,6 +1,9 @@
+require:
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
-  Exclude:
-    - 'spec'
+  NewCops: enable
 
 Layout/LineLength:
   Max: 120
@@ -52,3 +55,9 @@ Naming/BinaryOperatorParameterName:
 # Style preference
 Style/MethodDefParentheses:
   Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 4
+
+RSpec/ExampleLength:
+  Max: 16

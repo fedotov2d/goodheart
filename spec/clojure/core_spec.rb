@@ -21,7 +21,7 @@ RSpec.describe Clojure::Core do
 
   it "=" do
     expect(described_class["="][ns, [3, 3, 3]]).to be true
-    expect(described_class["="][ns, [3, 3, 2]]).to be false
+    expect(described_class["="][ns, [2, 2, 3]]).to be false
   end
 
   it "<" do
@@ -30,8 +30,8 @@ RSpec.describe Clojure::Core do
   end
 
   it ">" do
-    expect(described_class["<"][ns, [1, 2, 3]]).to be true
-    expect(described_class["<"][ns, [3, 3, 2]]).to be false
+    expect(described_class["<"][ns, [1, 2, 4]]).to be true
+    expect(described_class["<"][ns, [3, 5, 2]]).to be false
   end
 
   it "vector" do
@@ -62,11 +62,11 @@ RSpec.describe Clojure::Core do
   end
 
   it "let" do
-    expect(described_class["let"][ns, [["vector", "a", 2, "b", 3], ["+", "a", "b"]]]).to be 5
+    expect(described_class["let"][ns, [["vector", "a", 2, "b", 3], %w[+ a b]]]).to be 5
   end
 
   it "for" do
-    expect(described_class["for"][ns, [["vector", "a", ["vector", 1, 2, 3]], ["+", "a", "a"]]]).to match_array [2, 4, 6]
+    expect(described_class["for"][ns, [["vector", "a", ["vector", 1, 2, 3]], %w[+ a a]]]).to match_array [2, 4, 6]
   end
 
   it "merge" do
@@ -97,7 +97,7 @@ RSpec.describe Clojure::Core do
   it "or" do
     expect(described_class["or"][ns, [1, 2, 3]]).to be 1
     expect(described_class["or"][ns, [nil, 2, 3]]).to be 2
-    expect(described_class["or"][ns, [nil, nil, nil]]).to be nil
+    expect(described_class["or"][ns, [nil, nil, nil]]).to be_nil
   end
 
   it "if" do
@@ -107,11 +107,11 @@ RSpec.describe Clojure::Core do
 
   it "when" do
     expect(described_class["when"][ns, [true, 1]]).to be 1
-    expect(described_class["when"][ns, [nil, 1]]).to be nil
+    expect(described_class["when"][ns, [nil, 1]]).to be_nil
   end
 
   it "when-not" do
-    expect(described_class["when-not"][ns, [true, 1]]).to be nil
+    expect(described_class["when-not"][ns, [true, 1]]).to be_nil
     expect(described_class["when-not"][ns, [nil, 1]]).to be 1
   end
 

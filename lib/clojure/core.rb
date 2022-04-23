@@ -138,7 +138,7 @@ module Clojure
       # TODO: poor implementation
       lambda do |_ctx, fn_args|
         params = args[0][1..].zip(fn_args)
-        fn_ctx = ctx.merge(Hash[params])
+        fn_ctx = ctx.merge(params.to_h)
         args[1..].map do |form|
           fn_ctx.evaluate form
         end.last

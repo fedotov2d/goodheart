@@ -2,6 +2,7 @@
 
 require "yaml"
 
+# rubocop:disable RSpec/DescribeClass
 RSpec.describe "Shared validation on Clojure" do
   let(:ns) do
     rt = Clojure::Runtime.new
@@ -13,7 +14,7 @@ RSpec.describe "Shared validation on Clojure" do
   let(:valid_data) { YAML.load_file("spec/integration/valid_team.yml") }
   let(:invalid_data) { YAML.load_file("spec/integration/invalid_team.yml") }
 
-  context "simple" do
+  context "when simple" do
     it "valid data" do
       expect(ns.evaluate(["simple-validate", valid_data])).to be true
     end
@@ -23,7 +24,7 @@ RSpec.describe "Shared validation on Clojure" do
     end
   end
 
-  context "advanced" do
+  context "when advanced" do
     it "valid data" do
       errors = ns.evaluate ["advanced-validate", valid_data]
       expect(errors).to be_empty
@@ -36,3 +37,4 @@ RSpec.describe "Shared validation on Clojure" do
     end
   end
 end
+# rubocop:enable RSpec/DescribeClass
