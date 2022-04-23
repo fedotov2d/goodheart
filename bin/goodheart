@@ -4,12 +4,20 @@
 require "bundler/setup"
 require "goodheart"
 
+DEFAULT_NS = "user"
+
+ns = DEFAULT_NS
 rt = Clojure::Runtime.new
-rt.read("user", "(ns user)")
+rt.read(ns, "(ns user)")
 
 loop do
-  print "\nuser => "
+  print "\n#{ns} => "
   line = gets
-  result = rt.read("user", line)
-  puts result
+  if %w[exit quit].include? line.strip
+    puts "Bye for now!"
+    break
+  else
+    result = rt.read("user", line)
+    puts result
+  end
 end
