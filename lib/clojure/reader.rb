@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Clojure
   # read Clojure as Ruby's data-structures
   class Reader
@@ -7,10 +9,10 @@ module Clojure
       @ast = []
       loop do
         break if eof?
+
         r = read_next
         @ast << r if r
       end
-      true
     end
 
     def inspect
@@ -31,30 +33,34 @@ module Clojure
       @cursor = @io.getc || :eof
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/AbcSize
     def read_next
       # puts "reading next"
       # puts "-> #{cursor}"
       case cursor
-      when :eof then return
-      when /\s/ then skip_char
-      when /\,/ then skip_char
-      when /\;/ then skip_comment
+      when :eof then nil
+      when /\s|,/ then skip_char
+      when /;/ then skip_comment
       when /\d/ then read_number
       when /\(/ then read_form
       when /\[/ then read_form till: "]", into: ["vector"]
       when /\{/ then read_form till: "}", into: ["hash-map"]
-      when /\:/ then read_keyword
-      when /\"/ then read_string
-      when /\'/ then read_quote
+      when /:/ then read_keyword
+      when /"/ then read_string
+      when /'/ then read_quote
       when /\#/ then read_special
       when /\S/ then read_symbol
+      else raise StandardError, "Unexpected symbol: #{cursor}"
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/AbcSize
 
     def read_special
       case next_char
-      when /\_/ then read_sexp_comment
-      else raise Exception, "Unknown token: ##{cur}"
+      when /_/ then read_sexp_comment
+      else raise StandardError, "Unknown token: ##{cursor}"
       end
     end
 
@@ -79,7 +85,8 @@ module Clojure
       skip_char # opening parenthesis
       ast = into
       until cursor == till
-        raise Exception, "Unbalanced #{opening}#{till}" if eof?
+        raise StandardError, "Unbalanced #{opening}#{till}" if eof?
+
         r = read_next
         ast << r if r
       end
@@ -89,18 +96,18 @@ module Clojure
 
     def read_number
       n = cursor
-      while next_char.match /[\d|.]/
-        n << cursor
+      n << cursor while next_char.match(/[\d|.]/)
+      begin
+        Integer(n)
+      rescue StandardError
+        Float(n)
       end
-      Integer(n) rescue Float(n)
     end
 
     def read_keyword
       next_char
       k = cursor
-      while next_char.match /\w|\.|#|-|_/
-        k << cursor
-      end
+      k << cursor while next_char.match(/\w|\.|#|-|_/)
       k.to_sym
     end
 
@@ -109,34 +116,33 @@ module Clojure
       ["quote", read_next]
     end
 
+    # rubocop:disable Metrics/AbcSize
     def read_string
       next_char
       if cursor == '"'
         next_char
-        return ['str', ['quote', '']]
+        return ["str", ["quote", ""]]
       end
       s = cursor.dup
       prev = cursor
-      until (next_char == '"' && prev != "\\")
-        if cursor == "\\"
-        elsif cursor == "\""
-          s << cursor
-        elsif prev == "\\"
-          s << "\\#{cursor}"
-        else
-          s << cursor
+      until next_char == '"' && prev != "\\"
+        if cursor != "\\"
+          s << if prev == "\\" && cursor != '"'
+                 "\\#{cursor}"
+               else
+                 cursor
+               end
         end
         prev = cursor
       end
       next_char
-      ['str', ['quote', s]]
+      ["str", ["quote", s]]
     end
+    # rubocop:enable Metrics/AbcSize
 
     def read_symbol
       symbol = cursor
-      while next_char.match(/\w|-|\.|\?|\+|\//)
-        symbol << cursor
-      end
+      symbol << cursor while next_char.match(%r{\w|-|\.|\?|\+|/})
       symbol
     end
   end

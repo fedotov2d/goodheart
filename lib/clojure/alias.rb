@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Clojure
   class Alias
     def initialize

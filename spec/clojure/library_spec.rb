@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LibA
   extend Clojure::Library
   define "foo", ->(_, args) { args[0] + 2 }
@@ -18,10 +20,10 @@ RSpec.describe Clojure::Library do
   end
 
   it "bar of B not polute A" do
-    expect(LibA["bar"]).to be nil
+    expect(LibA["bar"]).to be_nil
   end
 
   it "foo of A not polute B" do
-    expect(LibB["foo"]).to be nil
+    expect(LibB["foo"]).to be_nil
   end
 end

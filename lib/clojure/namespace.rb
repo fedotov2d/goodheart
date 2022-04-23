@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+
 module Clojure
   class Namespace < Hash
     # Clojure's ns | evaluation context | class
 
+    # rubocop:disable Lint/MissingSuper
     def initialize(runtime)
       @runtime = runtime
     end
+    # rubocop:enable Lint/MissingSuper
 
     attr_reader :runtime
 
@@ -25,14 +29,14 @@ module Clojure
     private
 
     def resolve(symbol)
-      n, ns = symbol.split('/').reverse
+      n, ns = symbol.split("/").reverse
       i = self[ns] || self[n] || Clojure::Core[symbol] || raise("Can't resolve #{symbol}.")
       case i
       when Clojure::Alias
         if ns
-          i.lookup()[n]
+          i.lookup[n]
         else
-          i.lookup()
+          i.lookup
         end
       else
         i
@@ -46,15 +50,16 @@ module Clojure
              form_eval head
            when Symbol
              # dirty keyword IFn
-             -> (_ctx, args) { args[0][head] }
+             ->(_ctx, args) { args[0][head] }
            else
              resolve head
            end
-      raise Exception, "Function #{head} not defined" unless fn
+      raise StandardError, "Function #{head} not defined" unless fn
+
       args = if head.is_a?(String) && SPECIAL.include?(head)
                expressions
              else
-               expressions.map { |f| evaluate f }
+               expressions.map {|f| evaluate f }
              end
       fn.call self, args
     end

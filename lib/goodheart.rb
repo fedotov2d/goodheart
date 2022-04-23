@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "goodheart/version"
 require "clojure"
 require "clojure/alias"

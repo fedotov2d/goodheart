@@ -1,15 +1,16 @@
+# frozen_string_literal: true
+
 module Clojure
   module Library
-
     def ns
       @ns ||= {}
     end
 
-    def [] name
+    def [](name)
       ns[name]
     end
 
-    def dig name
+    def dig(name)
       ns[name]
     end
 

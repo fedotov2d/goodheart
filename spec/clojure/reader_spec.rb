@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Clojure::Reader do
   it "read lists correct" do
     r = described_class.new "( (),(( ) ,(),))"
@@ -41,7 +43,6 @@ RSpec.describe Clojure::Reader do
     expect(r.ast).to eq ["vector"]
   end
 
-
   it "read keyword correct" do
     r = described_class.new " :name "
     expect(r.ast).to eq [:name]
@@ -53,13 +54,13 @@ RSpec.describe Clojure::Reader do
   end
 
   it "read empty string correct" do
-    r = described_class.new " \"\" "
+    r = described_class.new ' "" '
     expect(r.ast).to eq [["str", ["quote", ""]]]
   end
 
   it "read quoted symbol correct" do
     r = described_class.new " 'hello "
-    expect(r.ast).to eq [["quote", "hello"]]
+    expect(r.ast).to eq [%w[quote hello]]
   end
 
   it "read quoted list correct" do

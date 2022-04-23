@@ -1,11 +1,12 @@
-name: Run RSpec
+name: Rubocop
 
 on:
-  - push
+  - pull_request
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
@@ -13,5 +14,5 @@ jobs:
           ruby-version: 2.6
           bundler-cache: true
 
-      - name: Run test
-        run: bundle exec rspec
+      - name: Run linter
+        run: bundle exec rubocop
