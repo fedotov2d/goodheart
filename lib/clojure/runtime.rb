@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Clojure
   class Runtime
     def initialize
@@ -11,7 +13,7 @@ module Clojure
     end
 
     def include(lib)
-      @namespaces[lib.name.downcase.gsub("::", ".").to_sym] = lib
+      @namespaces[lib.name.downcase.gsub('::', '.').to_sym] = lib
     end
 
     def load(filename)
@@ -19,7 +21,7 @@ module Clojure
       source = open(filename).read
       ast = Clojure::Reader.new(source).ast
       ast.each { |form| ns.evaluate form }
-      ns_name = ns["*ns*"]
+      ns_name = ns['*ns*']
       @namespaces[ns_name.to_sym] = namespace(ns_name).merge(ns)
     end
 

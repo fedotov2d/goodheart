@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Clojure
   class Namespace < Hash
     # Clojure's ns | evaluation context | class
@@ -30,9 +32,9 @@ module Clojure
       case i
       when Clojure::Alias
         if ns
-          i.lookup()[n]
+          i.lookup[n]
         else
-          i.lookup()
+          i.lookup
         end
       else
         i
@@ -46,11 +48,12 @@ module Clojure
              form_eval head
            when Symbol
              # dirty keyword IFn
-             -> (_ctx, args) { args[0][head] }
+             ->(_ctx, args) { args[0][head] }
            else
              resolve head
            end
-      raise Exception, "Function #{head} not defined" unless fn
+      raise StandardError, "Function #{head} not defined" unless fn
+
       args = if head.is_a?(String) && SPECIAL.include?(head)
                expressions
              else

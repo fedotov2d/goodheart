@@ -1,4 +1,6 @@
-RSpec.describe "Simple application with few namespaces" do
+# frozen_string_literal: true
+
+RSpec.describe 'Simple application with few namespaces' do
   let!(:rt) do
     rt = Clojure::Runtime.new
     rt.load('spec/integration/shared.clj')
@@ -6,8 +8,8 @@ RSpec.describe "Simple application with few namespaces" do
     rt
   end
 
-  context "loads" do
-    it "namespaces" do
+  context 'loads' do
+    it 'namespaces' do
     end
   end
 end
