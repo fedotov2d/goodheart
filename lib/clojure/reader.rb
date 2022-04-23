@@ -52,6 +52,7 @@ module Clojure
       when /'/ then read_quote
       when /\#/ then read_special
       when /\S/ then read_symbol
+      else raise StandardError, "Unexpected symbol: #{cursor}"
       end
     end
     # rubocop:enable Metrics/CyclomaticComplexity
@@ -60,7 +61,7 @@ module Clojure
     def read_special
       case next_char
       when /_/ then read_sexp_comment
-      else raise StandardError, "Unknown token: ##{cur}"
+      else raise StandardError, "Unknown token: ##{cursor}"
       end
     end
 

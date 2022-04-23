@@ -3,8 +3,10 @@
 RSpec.describe "Simple application with few namespaces" do
   let!(:rt) do
     rt = Clojure::Runtime.new
-    rt.load("spec/integration/shared.clj")
-    rt.load("spec/integration/app.clj")
+    source1 = open("spec/integration/shared.clj").read
+    rt.read("shared", source1)
+    source2 = open("spec/integration/app.clj").read
+    rt.read("app", source2)
     rt
   end
 

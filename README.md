@@ -46,7 +46,7 @@ Or install it yourself as:
 require "goodheart"
 
 runtime = Clojure::Runtime.new
-runtime.load("shared_validation.clj")
+runtime.read("validation", open("shared_validation.clj").read)
 runtime.namespace("validation").evaluate(["validate", data])
 ```
 

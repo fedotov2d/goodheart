@@ -4,10 +4,11 @@ module Clojure
   class Namespace < Hash
     # Clojure's ns | evaluation context | class
 
+    # rubocop:disable Lint/MissingSuper
     def initialize(runtime)
       @runtime = runtime
-      super
     end
+    # rubocop:enable Lint/MissingSuper
 
     attr_reader :runtime
 

@@ -5,7 +5,8 @@ require "yaml"
 RSpec.describe "Shared validation on Clojure" do
   let(:ns) do
     rt = Clojure::Runtime.new
-    rt.load("spec/integration/validation.clj")
+    source = open("spec/integration/validation.clj").read
+    rt.read("validation", source)
     rt.namespace "validation"
   end
 
