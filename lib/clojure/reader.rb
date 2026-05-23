@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "stringio"
+
 module Clojure
   # read Clojure as Ruby's data-structures
   class Reader

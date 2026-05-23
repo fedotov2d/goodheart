@@ -13,7 +13,7 @@ module Clojure
     define ">", ->(_ctx, args) { !args.inject {|x, y| x >  y ? x : break }.nil? }
     define "<", ->(_ctx, args) { !args.inject {|x, y| x <  y ? x : break }.nil? }
 
-    define "vector", ->(_ctx, args) { Array[*args] }
+    define "vector", ->(_ctx, args) { [*args] }
     define "hash-map", ->(_ctx, args) { Hash[*args] }
 
     define "str", ->(_ctx, args) { args.map(&:to_s).join }
@@ -22,9 +22,14 @@ module Clojure
     define "not", ->(_ctx, args) { !args }
     define "nil?", ->(_ctx, args) { args.first.nil? }
 
-    define "do", ->(_ctx, args) { args.map {|f| ctx.evaluate f } }
+    define "do", (lambda do |ctx, args|
+      # SPECIAL: receives unevaluated forms; evaluates each in order, returns the last value.
+      result = nil
+      args.each {|f| result = ctx.evaluate f }
+      result
+    end)
 
-    define "subs", ->(ctx, args) { (ctx.evaluate(args[0]))[ctx.evaluate(args[1])..(ctx.evaluate(args[2]) || -1)] }
+    define "subs", ->(ctx, args) { ctx.evaluate(args[0])[ctx.evaluate(args[1])..(ctx.evaluate(args[2]) || -1)] }
 
     define "let", (lambda do |ctx, forms|
       # skip "vector" from params
@@ -50,17 +55,58 @@ module Clojure
       end
     end)
 
-    define "and", ->(ctx, args) { args.map {|form| ctx.evaluate form }.all? }
+    define "and", (lambda do |ctx, args|
+      # SPECIAL: short-circuits — evaluates forms left to right, returns the first
+      # falsy value, or the last value if all are truthy. Forms past the first
+      # falsy are never evaluated.
+      return true if args.empty?
+
+      last = nil
+      args.each do |form|
+        last = ctx.evaluate form
+        return last unless last
+      end
+      last
+    end)
+
     define "or", (lambda do |ctx, args|
-      args.find {|form| !ctx.evaluate(form).nil? }
+      # SPECIAL: short-circuits — evaluates forms left to right, returns the first
+      # truthy value. If all are falsy, returns the last evaluated value (nil/false).
+      # Forms past the first truthy are never evaluated.
+      last = nil
+      args.each do |form|
+        last = ctx.evaluate form
+        return last if last
+      end
+      last
     end)
 
     define "if", (lambda do |ctx, args|
+      # SPECIAL: evaluates the test, then evaluates only the chosen branch.
       clause, then_expr, else_expr = args
-      ctx.evaluate(clause) ? then_expr : else_expr
+      chosen = ctx.evaluate(clause) ? then_expr : else_expr
+      ctx.evaluate chosen
     end)
-    define "when", ->(ctx, args) { self["if"][ctx, [*args[0..1], nil]] }
-    define "when-not", ->(ctx, args) { self["if"][ctx, [args[0], nil, args[1]]] }
+
+    define "when", (lambda do |ctx, args|
+      # SPECIAL: evaluates body only when test is truthy.
+      test, *body = args
+      return nil unless ctx.evaluate(test)
+
+      result = nil
+      body.each {|f| result = ctx.evaluate f }
+      result
+    end)
+
+    define "when-not", (lambda do |ctx, args|
+      # SPECIAL: evaluates body only when test is falsy.
+      test, *body = args
+      return nil if ctx.evaluate(test)
+
+      result = nil
+      body.each {|f| result = ctx.evaluate f }
+      result
+    end)
 
     define "count", ->(_ctx, args) { (args[0] || []).length }
     define "get", ->(_ctx, args) { args[0][args[1]] || args[2] }

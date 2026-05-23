@@ -66,7 +66,7 @@ RSpec.describe Clojure::Core do
   end
 
   it "for" do
-    expect(described_class["for"][ns, [["vector", "a", ["vector", 1, 2, 3]], %w[+ a a]]]).to match_array [2, 4, 6]
+    expect(described_class["for"][ns, [["vector", "a", ["vector", 1, 2, 3]], %w[+ a a]]]).to contain_exactly(2, 4, 6)
   end
 
   it "merge" do
@@ -86,33 +86,63 @@ RSpec.describe Clojure::Core do
   end
 
   it "rest" do
-    expect(described_class["rest"][ns, [[:a, 1, :b, 2]]]).to match_array [1, :b, 2]
+    expect(described_class["rest"][ns, [[:a, 1, :b, 2]]]).to contain_exactly(1, :b, 2)
   end
 
   it "and" do
-    expect(described_class["and"][ns, [1, 2, 3]]).to be true
-    expect(described_class["and"][ns, [1, 2, nil]]).to be false
+    # returns the last value when all truthy
+    expect(described_class["and"][ns, [1, 2, 3]]).to be 3
+    # returns the first falsy value (nil) without evaluating subsequent forms
+    expect(described_class["and"][ns, [1, nil, 3]]).to be_nil
+    # laziness probe: a raising form after the first falsy is not evaluated
+    expect(described_class["and"][ns, [1, nil, ["/", 1, 0]]]).to be_nil
+    # laziness probe: an unchosen branch in the trailing position is not evaluated
+    # n/a for and-truthy: every truthy form must be evaluated; but the *next* clause
+    # after a falsy must be skipped — the above covers that.
   end
 
   it "or" do
+    # returns the first truthy value
     expect(described_class["or"][ns, [1, 2, 3]]).to be 1
     expect(described_class["or"][ns, [nil, 2, 3]]).to be 2
+    # all falsy returns the last value evaluated (nil here)
     expect(described_class["or"][ns, [nil, nil, nil]]).to be_nil
+    # laziness probe: forms after the first truthy must not be evaluated
+    expect(described_class["or"][ns, [5, ["/", 1, 0]]]).to be 5
   end
 
   it "if" do
-    expect(described_class["if"][ns, [true, 1, 2]]).to be 1
-    expect(described_class["if"][ns, [nil, 1, 2]]).to be 2
+    # arity-2 (no else) returns nil on falsy
+    expect(described_class["if"][ns, [nil, 1]]).to be_nil
+    # truthiness of 0 — Clojure treats 0 as truthy
+    expect(described_class["if"][ns, [0, :then, :else]]).to be :then
+    # laziness probe (the wound): unchosen branch is not evaluated
+    expect(described_class["if"][ns, [true, 1, ["/", 1, 0]]]).to be 1
+    expect(described_class["if"][ns, [nil, ["/", 1, 0], :else]]).to be :else
   end
 
   it "when" do
     expect(described_class["when"][ns, [true, 1]]).to be 1
     expect(described_class["when"][ns, [nil, 1]]).to be_nil
+    # laziness probe: body not evaluated when test is falsy
+    expect(described_class["when"][ns, [nil, ["/", 1, 0]]]).to be_nil
   end
 
   it "when-not" do
     expect(described_class["when-not"][ns, [true, 1]]).to be_nil
     expect(described_class["when-not"][ns, [nil, 1]]).to be 1
+    # laziness probe: body not evaluated when test is truthy
+    expect(described_class["when-not"][ns, [true, ["/", 1, 0]]]).to be_nil
+  end
+
+  it "do" do
+    # returns the value of the last form
+    expect(described_class["do"][ns, [["+", 1, 2], ["+", 3, 4]]]).to be 7
+    # evaluates each form in order — earlier forms have side effects (def binding)
+    described_class["do"][ns, [["def", "x", 42], ["+", "x", 0]]]
+    expect(ns["x"]).to be 42
+    # the return value reflects the last form, not the first
+    expect(described_class["do"][ns, [["+", 1, 2], ["+", 3, 4]]]).to be 7
   end
 
   it "map" do

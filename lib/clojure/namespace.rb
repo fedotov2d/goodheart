@@ -13,7 +13,7 @@ module Clojure
     attr_reader :runtime
 
     # calls with postponed evaluation of expression
-    SPECIAL = %w[ns fn defn def quote let for].freeze
+    SPECIAL = %w[and def defn do fn for if let ns or quote when when-not].freeze
 
     def evaluate(form)
       case form
