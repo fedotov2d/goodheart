@@ -12,3 +12,7 @@
 # rspec failure tracking
 .rspec_status
 .byebug_history
+.dual-graph/
+
+# Per-machine Claude Code settings (hooks reference absolute paths)
+.claude/settings.local.json
