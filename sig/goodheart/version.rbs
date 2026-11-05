@@ -1,0 +1,3 @@
+module Goodheart
+  VERSION: String
+end

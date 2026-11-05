@@ -1,0 +1,5 @@
+module Clojure
+  # A Clojure function. Arguments are raw forms or already evaluated values,
+  # depending on the function.
+  type function = ^(Namespace context, untyped arguments) -> untyped
+end

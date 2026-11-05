@@ -2,7 +2,7 @@
 
 require "yaml"
 
-# rubocop:disable RSpec/DescribeClass
+# rubocop:disable-next RSpec/DescribeClass
 RSpec.describe "Shared validation on Clojure" do
   let(:ns) do
     rt = Clojure::Runtime.new
@@ -37,4 +37,3 @@ RSpec.describe "Shared validation on Clojure" do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass

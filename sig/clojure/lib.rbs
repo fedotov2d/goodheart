@@ -1,0 +1,13 @@
+module Clojure
+  module Library
+    @ns: Hash[String, function]
+
+    def ns: () -> Hash[String, function]
+
+    def []: (String name) -> function
+
+    def dig: (String name) -> function
+
+    def define: (String name, function value) -> function
+  end
+end

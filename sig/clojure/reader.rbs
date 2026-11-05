@@ -1,0 +1,42 @@
+module Clojure
+  class Reader
+    @source: String
+    @io: StringIO
+    @cursor: untyped
+
+    def initialize: (String source) -> void
+
+    # Returns the parsed AST. This is not a String, unlike Object#inspect.
+    def inspect: () -> Array[untyped]
+
+    attr_reader ast: Array[untyped]
+
+    def cursor: () -> untyped
+
+    def eof?: () -> bool
+
+    def next_char: () -> untyped
+
+    def read_next: () -> untyped
+
+    def read_special: () -> untyped
+
+    def read_sexp_comment: () -> nil
+
+    def skip_char: () -> nil
+
+    def skip_comment: () -> nil
+
+    def read_form: (?till: String, ?into: Array[untyped]) -> Array[untyped]
+
+    def read_number: () -> (Integer | Float)
+
+    def read_keyword: () -> Symbol
+
+    def read_quote: () -> Array[untyped]
+
+    def read_string: () -> Array[untyped]
+
+    def read_symbol: () -> String
+  end
+end

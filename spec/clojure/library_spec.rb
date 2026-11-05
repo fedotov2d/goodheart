@@ -2,11 +2,13 @@
 
 class LibA
   extend Clojure::Library
+
   define "foo", ->(_, args) { args[0] + 2 }
 end
 
 class LibB
   extend Clojure::Library
+
   define "bar", ->(_, args) { args[0] * 2 }
 end
 

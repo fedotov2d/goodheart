@@ -1,0 +1,7 @@
+module Clojure
+  # Built-ins live in the library hash, not as Ruby methods.
+  # Call them as Core["name"][context, arguments].
+  class Core
+    extend Library
+  end
+end

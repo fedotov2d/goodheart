@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "stringio"
+
 module Clojure
   # read Clojure as Ruby's data-structures
   class Reader
@@ -116,7 +118,7 @@ module Clojure
       ["quote", read_next]
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def read_string
       next_char
       if cursor == '"'
@@ -138,7 +140,6 @@ module Clojure
       next_char
       ["str", ["quote", s]]
     end
-    # rubocop:enable Metrics/AbcSize
 
     def read_symbol
       symbol = cursor

@@ -61,12 +61,16 @@ RSpec.describe Clojure::Core do
     expect(described_class["nil?"][ns, [nil]]).to be true
   end
 
+  it "do" do
+    expect(described_class["do"][ns, [1, ["+", 2, 3]]]).to eq [1, 5]
+  end
+
   it "let" do
     expect(described_class["let"][ns, [["vector", "a", 2, "b", 3], %w[+ a b]]]).to be 5
   end
 
   it "for" do
-    expect(described_class["for"][ns, [["vector", "a", ["vector", 1, 2, 3]], %w[+ a a]]]).to match_array [2, 4, 6]
+    expect(described_class["for"][ns, [["vector", "a", ["vector", 1, 2, 3]], %w[+ a a]]]).to contain_exactly(2, 4, 6)
   end
 
   it "merge" do
@@ -86,7 +90,7 @@ RSpec.describe Clojure::Core do
   end
 
   it "rest" do
-    expect(described_class["rest"][ns, [[:a, 1, :b, 2]]]).to match_array [1, :b, 2]
+    expect(described_class["rest"][ns, [[:a, 1, :b, 2]]]).to contain_exactly(1, :b, 2)
   end
 
   it "and" do

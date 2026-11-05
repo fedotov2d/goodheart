@@ -1,0 +1,11 @@
+module Clojure
+  class Alias
+    @lookup: ^() -> untyped
+
+    def initialize: () { () -> (^() -> untyped) } -> void
+
+    def lookup: () -> untyped
+
+    def call: (untyped context, untyped arguments) -> untyped
+  end
+end

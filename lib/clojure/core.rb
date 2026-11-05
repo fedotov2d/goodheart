@@ -13,18 +13,18 @@ module Clojure
     define ">", ->(_ctx, args) { !args.inject {|x, y| x >  y ? x : break }.nil? }
     define "<", ->(_ctx, args) { !args.inject {|x, y| x <  y ? x : break }.nil? }
 
-    define "vector", ->(_ctx, args) { Array[*args] }
+    define "vector", ->(_ctx, args) { [*args] }
     define "hash-map", ->(_ctx, args) { Hash[*args] }
 
-    define "str", ->(_ctx, args) { args.map(&:to_s).join }
+    define "str", ->(_ctx, args) { args.join }
     define "quote", ->(_ctx, args) { args.first }
 
     define "not", ->(_ctx, args) { !args }
     define "nil?", ->(_ctx, args) { args.first.nil? }
 
-    define "do", ->(_ctx, args) { args.map {|f| ctx.evaluate f } }
+    define "do", ->(ctx, args) { args.map {|f| ctx.evaluate f } }
 
-    define "subs", ->(ctx, args) { (ctx.evaluate(args[0]))[ctx.evaluate(args[1])..(ctx.evaluate(args[2]) || -1)] }
+    define "subs", ->(ctx, args) { ctx.evaluate(args[0])[ctx.evaluate(args[1])..(ctx.evaluate(args[2]) || -1)] }
 
     define "let", (lambda do |ctx, forms|
       # skip "vector" from params
@@ -45,7 +45,8 @@ module Clojure
       key = head[1]
       col = ctx.evaluate head[2]
       col.map do |i|
-        fctx = ctx.merge key => i
+        fctx = ctx.dup
+        fctx[key] = i
         fctx.evaluate expr
       end
     end)
@@ -116,6 +117,7 @@ module Clojure
         args[1][1..].each do |refer|
           ns = refer[1].to_sym
           binds = Hash[*refer[2..]]
+          # @type var bindings: Hash[Symbol, untyped]
           bindings = {}
           bindings[binds[:as]] = [ns] if binds[:as]
           if binds[:refer]
@@ -138,7 +140,8 @@ module Clojure
       # TODO: poor implementation
       lambda do |_ctx, fn_args|
         params = args[0][1..].zip(fn_args)
-        fn_ctx = ctx.merge(params.to_h)
+        fn_ctx = ctx.dup
+        params.each {|k, v| fn_ctx[k] = v }
         args[1..].map do |form|
           fn_ctx.evaluate form
         end.last

@@ -1,0 +1,13 @@
+module Clojure
+  class Runtime
+    def initialize: () -> void
+
+    attr_reader namespaces: Hash[Symbol, untyped]
+
+    def namespace: (String | Symbol name) -> Namespace
+
+    def include: (Module lib) -> Module
+
+    def read: (String | Symbol ns_name, String source) -> untyped
+  end
+end

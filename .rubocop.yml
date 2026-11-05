@@ -1,9 +1,12 @@
-require:
+plugins:
   - rubocop-rake
   - rubocop-rspec
 
 AllCops:
   NewCops: enable
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
 
 Layout/LineLength:
   Max: 120

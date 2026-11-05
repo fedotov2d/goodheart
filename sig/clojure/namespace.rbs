@@ -1,0 +1,17 @@
+module Clojure
+  class Namespace < Hash[untyped, untyped]
+    SPECIAL: Array[String]
+
+    def initialize: (Runtime runtime) -> void
+
+    attr_reader runtime: Runtime
+
+    def evaluate: (untyped form) -> untyped
+
+    private
+
+    def resolve: (String symbol) -> untyped
+
+    def form_eval: (Array[untyped] form) -> untyped
+  end
+end
