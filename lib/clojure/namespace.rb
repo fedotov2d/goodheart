@@ -12,7 +12,9 @@ module Clojure
     attr_reader :runtime
 
     # calls with postponed evaluation of expression
-    SPECIAL = %w[ns fn defn def quote let for if do and or when when-not].freeze
+    SPECIAL = %w[
+      ns fn defn defmacro def quote syntax-quote unquote unquote-splicing let for if do and or
+    ].freeze
     LITERALS = { "true" => true, "false" => false, "nil" => nil }.freeze
 
     def evaluate(form)
@@ -26,16 +28,27 @@ module Clojure
       end
     end
 
+    def resolve_macro(symbol)
+      return nil unless symbol.is_a?(String) && !LITERALS.key?(symbol)
+
+      n, ns_name = symbol.split("/").reverse
+      target = unwrap_alias(find_entry(symbol, n, ns_name), n, ns_name)
+      target if target.is_a?(Clojure::Macro)
+    end
+
     private
 
     def resolve(symbol)
       return LITERALS[symbol] if LITERALS.key?(symbol)
 
       n, ns = symbol.split("/").reverse
-      i = lookup(symbol, n, ns)
-      return i unless i.is_a?(Clojure::Alias)
+      unwrap_alias(lookup(symbol, n, ns), n, ns)
+    end
 
-      ns ? i.lookup[n] : i.lookup
+    def unwrap_alias(entry, name, ns_name)
+      return entry unless entry.is_a?(Clojure::Alias)
+
+      ns_name ? entry.lookup[name] : entry.lookup
     end
 
     def lookup(symbol, name, ns_name)
@@ -45,27 +58,38 @@ module Clojure
       Clojure::Core[symbol] || raise("Can't resolve #{symbol}.")
     end
 
+    def find_entry(symbol, name, ns_name)
+      return self[ns_name] if ns_name && key?(ns_name)
+      return self[name] if name && key?(name)
+
+      Clojure::Core[symbol]
+    end
+
     def form_eval(form)
       return [] if form.empty?
 
       head, *expressions = form
-      fn = case head
-           when Array
-             form_eval head
-           when Symbol
-             # dirty keyword IFn
-             ->(_ctx, args) { args[0][head] }
-           else
-             resolve head
-           end
+      fn = resolve_head(head)
       raise StandardError, "Function #{head} not defined" unless fn
 
-      args = if head.is_a?(String) && SPECIAL.include?(head)
-               expressions
-             else
-               expressions.map {|f| evaluate f }
-             end
+      args = unevaluated_args?(head, fn) ? expressions : expressions.map {|f| evaluate f }
       fn.call self, args
+    end
+
+    def resolve_head(head)
+      case head
+      when Array
+        form_eval head
+      when Symbol
+        # dirty keyword IFn
+        ->(_ctx, args) { args[0][head] }
+      else
+        resolve head
+      end
+    end
+
+    def unevaluated_args?(head, func)
+      func.is_a?(Clojure::Macro) || (head.is_a?(String) && SPECIAL.include?(head))
     end
   end
 end

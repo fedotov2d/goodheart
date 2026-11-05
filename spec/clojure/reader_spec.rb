@@ -88,4 +88,18 @@ RSpec.describe Clojure::Reader do
     expect { described_class.new "1/" }.to raise_error(StandardError, "Invalid number: 1/")
     expect { described_class.new "1.5/2" }.to raise_error(StandardError, "Invalid number: 1.5/2")
   end
+
+  it "read syntax-quote, unquote, and unquote-splicing" do
+    r = described_class.new "`(if ~pred nil (do ~@body))"
+    expect(r.ast).to eq [
+      ["syntax-quote", ["if", %w[unquote pred], "nil", ["do", %w[unquote-splicing body]]]]
+    ]
+  end
+
+  it "read auto-gensym symbols inside syntax-quote" do
+    r = described_class.new "`(let [x# ~v] x#)"
+    expect(r.ast).to eq [
+      ["syntax-quote", ["let", ["vector", "x#", %w[unquote v]], "x#"]]
+    ]
+  end
 end

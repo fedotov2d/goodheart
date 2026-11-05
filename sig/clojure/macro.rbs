@@ -1,0 +1,13 @@
+module Clojure
+  class Macro
+    @fn: function
+
+    def initialize: (function func) -> void
+
+    def expand: (Namespace context, untyped arguments) -> untyped
+
+    def call: (Namespace context, untyped arguments) -> untyped
+
+    alias [] call
+  end
+end

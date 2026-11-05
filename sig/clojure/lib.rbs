@@ -1,13 +1,15 @@
 module Clojure
   module Library
-    @ns: Hash[String, function]
+    @ns: Hash[String, callable]
 
-    def ns: () -> Hash[String, function]
+    def ns: () -> Hash[String, callable]
 
-    def []: (String name) -> function
+    def []: (String name) -> callable
 
-    def dig: (String name) -> function
+    def dig: (String name) -> callable
 
-    def define: (String name, function value) -> function
+    def define: (String name, callable value) -> callable
+
+    def define_macro: (String name, function value) -> Macro
   end
 end

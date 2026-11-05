@@ -9,12 +9,22 @@ module Clojure
 
     def evaluate: (untyped form) -> untyped
 
+    def resolve_macro: (untyped symbol) -> Macro?
+
     private
 
     def resolve: (String symbol) -> untyped
 
+    def unwrap_alias: (untyped entry, String? name, String? ns_name) -> untyped
+
     def lookup: (String symbol, String? name, String? ns_name) -> untyped
 
+    def find_entry: (String symbol, String? name, String? ns_name) -> untyped
+
     def form_eval: (Array[untyped] form) -> untyped
+
+    def resolve_head: (untyped head) -> untyped
+
+    def unevaluated_args?: (untyped head, untyped func) -> bool
   end
 end

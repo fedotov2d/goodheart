@@ -5,7 +5,7 @@ require "stringio"
 module Clojure
   # read Clojure as Ruby's data-structures
   class Reader
-    SYMBOL_CHAR = %r{\w|-|\.|\?|\+|/|>|<|=|\*|!}
+    SYMBOL_CHAR = %r{\w|-|\.|\?|\+|/|>|<|=|\*|!|#}
 
     def initialize(source)
       @source = source
@@ -54,6 +54,8 @@ module Clojure
       when /:/    then read_keyword
       when /"/    then read_string
       when /'/    then read_quote
+      when /`/    then read_syntax_quote
+      when /~/    then read_unquote
       when /\#/   then read_special
       when /\S/   then read_symbol
       else raise StandardError, "Unexpected symbol: #{cursor}"
@@ -137,6 +139,20 @@ module Clojure
     def read_quote
       skip_char # '
       ["quote", read_next]
+    end
+
+    def read_syntax_quote
+      skip_char # `
+      ["syntax-quote", read_next]
+    end
+
+    def read_unquote
+      if next_char == "@"
+        skip_char
+        ["unquote-splicing", read_next]
+      else
+        ["unquote", read_next]
+      end
     end
 
     # rubocop:disable-next Metrics/AbcSize

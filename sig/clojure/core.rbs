@@ -4,6 +4,26 @@ module Clojure
   class Core
     extend Library
 
+    @gensym_counter: Integer?
+
+    def self.next_gensym: (?String prefix) -> String
+
+    def self.syntax_quote: (Namespace ctx, untyped form, Hash[String, String] gensyms) -> untyped
+
+    def self.syntax_quote_symbol: (String symbol, Hash[String, String] gensyms) -> String
+
+    def self.syntax_quote_array: (Namespace ctx, Array[untyped] form, Hash[String, String] gensyms) -> untyped
+
+    def self.syntax_quote_list: (Namespace ctx, Array[untyped] list, Hash[String, String] gensyms) -> Array[untyped]
+
+    def self.macroexpand_once: (Namespace ctx, untyped form) -> untyped
+
+    def self.macroexpand_all: (Namespace ctx, untyped form) -> untyped
+
+    def self.thread_first_step: (untyped acc, untyped form) -> Array[untyped]
+
+    def self.thread_last_step: (untyped acc, untyped form) -> Array[untyped]
+
     def self.parse_fn: (Array[untyped] args) -> [String?, Array[untyped]]
 
     def self.vector_form?: (untyped form) -> bool

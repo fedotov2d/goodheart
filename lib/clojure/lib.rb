@@ -17,5 +17,9 @@ module Clojure
     def define(name, value)
       ns[name] = value
     end
+
+    def define_macro(name, value)
+      ns[name] = Macro.new(value)
+    end
   end
 end

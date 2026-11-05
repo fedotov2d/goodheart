@@ -3,6 +3,7 @@
 require "goodheart/version"
 require "clojure"
 require "clojure/alias"
+require "clojure/macro"
 require "clojure/lib"
 require "clojure/core"
 require "clojure/reader"

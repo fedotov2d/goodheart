@@ -19,7 +19,7 @@ _**The Tin Man:** But, I... I still want one._
 - [x] Closures
 - [x] Many namespaces
 - [x] Repl
-- [ ] Macros
+- [x] Macros
 - [ ] Full clojure.core
 - [ ] Full core.async
 - [ ] A lot of other things...

@@ -38,6 +38,31 @@ RSpec.describe Clojure::Core do
     expect(described_class["vector"][ns, [1, 2, 3]]).to eq([1, 2, 3])
   end
 
+  it "list, cons, and concat" do
+    expect(described_class["list"][ns, [1, 2, 3]]).to eq([1, 2, 3])
+    expect(described_class["cons"][ns, [1, [2, 3]]]).to eq([1, 2, 3])
+    expect(described_class["concat"][ns, [[1, 2], [3], [4, 5]]]).to eq([1, 2, 3, 4, 5])
+  end
+
+  it "second, last, empty?, and seq" do
+    expect(described_class["second"][ns, [[10, 20, 30]]]).to eq(20)
+    expect(described_class["last"][ns, [[10, 20, 30]]]).to eq(30)
+    expect(described_class["empty?"][ns, [[]]]).to be(true)
+    expect(described_class["seq"][ns, [[]]]).to be_nil
+  end
+
+  it "apply" do
+    expect(described_class["apply"][ns, [described_class["+"], 1, 2, [3, 4]]]).to eq(10)
+  end
+
+  it "gensym" do
+    a = described_class["gensym"][ns, []]
+    b = described_class["gensym"][ns, ["custom_"]]
+    expect(a).to start_with("G__")
+    expect(b).to start_with("custom_")
+    expect(a).not_to eq(b)
+  end
+
   it "hash-map" do
     expect(described_class["hash-map"][ns, [:a, 2, :b, 4]]).to eq({ a: 2, b: 4 })
   end
@@ -125,6 +150,25 @@ RSpec.describe Clojure::Core do
     expect(described_class["when-not"][ns, [true, ["boom"]]]).to be_nil
     expect(described_class["when-not"][ns, [false, 1, ["+", 2, 3]]]).to be 5
     expect(described_class["when-not"][ns, [nil, 1]]).to be 1
+  end
+
+  it "if-not" do
+    expect(described_class["if-not"][ns, [false, ["+", 1, 2], ["boom"]]]).to be 3
+    expect(described_class["if-not"][ns, [true, ["boom"], ["+", 2, 3]]]).to be 5
+  end
+
+  it "cond" do
+    expect(described_class["cond"][ns, [false, ["boom"], true, ["+", 2, 3], :else, ["boom"]]]).to be 5
+    expect(described_class["cond"][ns, [false, 1, nil, 2, :else, 9]]).to be 9
+    expect(described_class["cond"][ns, [false, 1]]).to be_nil
+    expect do
+      described_class["cond"][ns, [true]]
+    end.to raise_error(StandardError, "cond requires an even number of forms")
+  end
+
+  it "-> and ->>" do
+    expect(described_class["->"][ns, [10, ["-", 3], ["*", 2]]]).to be 14
+    expect(described_class["->>"][ns, [3, ["-", 10], ["*", 2]]]).to be 14
   end
 
   it "map" do

@@ -41,6 +41,10 @@ module Clojure
 
     def read_quote: () -> Array[untyped]
 
+    def read_syntax_quote: () -> Array[untyped]
+
+    def read_unquote: () -> Array[untyped]
+
     def read_string: () -> Array[untyped]
 
     def read_symbol: (?String symbol) -> String
