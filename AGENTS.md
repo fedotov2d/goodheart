@@ -48,3 +48,11 @@ Every file under `lib/` has a signature. When working on a Ruby file under `lib/
   - Avoid numeric suffixes on Ruby method names (`macroexpand_once`, not `macroexpand_1`).
   - Use `inject` instead of `reduce`.
   - Keep methods small (cyclomatic/perceived complexity <= 8, ABC <= 17) and RSpec `it` blocks focused (<= 4 expectations, <= 16 lines).
+
+## Versioning
+
+`Goodheart::VERSION` lives in `lib/goodheart/version.rb` (`0.MINOR.PATCH` while pre-1.0). Bump it on every change to `lib/` (and sync `Gemfile.lock` by running `bundle exec rake spec` or `bundle lock`):
+
+- **Roadmap milestone** (checking an item in `README.md`): increment `MINOR` and reset `PATCH` to `0` (e.g., `0.5.4` -> `0.6.0`).
+- **Feature slice, correctness fix, or runtime/tooling update in `lib/`**: increment `PATCH` by `1` (e.g., `0.6.0` -> `0.6.1`).
+- **Docs-only or spec-only changes**: do not bump `VERSION`.

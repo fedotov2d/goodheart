@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goodheart (0.5.2)
+    goodheart (0.6.0)
       stringio (>= 3.0)
 
 GEM
