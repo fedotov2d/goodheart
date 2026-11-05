@@ -5,6 +5,8 @@ require "stringio"
 module Clojure
   # read Clojure as Ruby's data-structures
   class Reader
+    SYMBOL_CHAR = %r{\w|-|\.|\?|\+|/|>|<|=|\*|!}
+
     def initialize(source)
       @source = source
       @io = StringIO.new source
@@ -45,6 +47,7 @@ module Clojure
       when /\s|,/ then skip_char
       when /;/    then skip_comment
       when /\d/   then read_number
+      when /[+-]/ then read_signed
       when /\(/   then read_form
       when /\[/   then read_form till: "]", into: ["vector"]
       when /\{/   then read_form till: "}", into: ["hash-map"]
@@ -58,6 +61,15 @@ module Clojure
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/AbcSize
+
+    def read_signed
+      sign = +cursor.to_s
+      if next_char != :eof && cursor.match?(/\d/)
+        read_number(sign)
+      else
+        read_symbol(sign)
+      end
+    end
 
     def read_special
       case next_char
@@ -96,20 +108,29 @@ module Clojure
       ast
     end
 
-    def read_number
-      n = cursor
-      n << cursor while next_char.match(/[\d|.]/)
-      begin
-        Integer(n)
-      rescue StandardError
-        Float(n)
+    def read_number(prefix="")
+      n = "#{prefix}#{cursor}"
+      n << cursor while next_char != :eof && !cursor.match?(/[\s,()\[\]{}";]/)
+      parse_number(n)
+    end
+
+    def parse_number(token)
+      case token
+      when /\A[+-]?\d+\z/
+        Integer(token)
+      when /\A[+-]?\d+\.\d+\z/
+        Float(token)
+      when %r{\A[+-]?\d+/\d+\z}
+        Rational(token)
+      else
+        raise StandardError, "Invalid number: #{token}"
       end
     end
 
     def read_keyword
       next_char
-      k = cursor
-      k << cursor while next_char.match(/\w|\.|#|-|_/)
+      k = +cursor.to_s
+      k << cursor while next_char != :eof && cursor.match?(/\w|\.|#|-|_/)
       k.to_sym
     end
 
@@ -141,9 +162,15 @@ module Clojure
       ["str", ["quote", s]]
     end
 
-    def read_symbol
-      symbol = cursor
-      symbol << cursor while next_char.match(%r{\w|-|\.|\?|\+|/})
+    def read_symbol(symbol=+"")
+      if symbol.empty?
+        symbol << cursor
+        next_char
+      end
+      while !eof? && cursor.match?(SYMBOL_CHAR)
+        symbol << cursor
+        next_char
+      end
       symbol
     end
   end

@@ -30,8 +30,8 @@ RSpec.describe Clojure::Core do
   end
 
   it ">" do
-    expect(described_class["<"][ns, [1, 2, 4]]).to be true
-    expect(described_class["<"][ns, [3, 5, 2]]).to be false
+    expect(described_class[">"][ns, [4, 2, 1]]).to be true
+    expect(described_class[">"][ns, [2, 5, 3]]).to be false
   end
 
   it "vector" do
@@ -52,8 +52,9 @@ RSpec.describe Clojure::Core do
   end
 
   it "not" do
-    expect(described_class["not"][ns, true]).to be false
-    expect(described_class["not"][ns, false]).to be true
+    expect(described_class["not"][ns, [true]]).to be false
+    expect(described_class["not"][ns, [false]]).to be true
+    expect(described_class["not"][ns, [nil]]).to be true
   end
 
   it "nil?" do
@@ -62,7 +63,8 @@ RSpec.describe Clojure::Core do
   end
 
   it "do" do
-    expect(described_class["do"][ns, [1, ["+", 2, 3]]]).to eq [1, 5]
+    expect(described_class["do"][ns, [1, ["+", 2, 3]]]).to be 5
+    expect(described_class["do"][ns, []]).to be_nil
   end
 
   it "let" do
@@ -94,28 +96,34 @@ RSpec.describe Clojure::Core do
   end
 
   it "and" do
-    expect(described_class["and"][ns, [1, 2, 3]]).to be true
-    expect(described_class["and"][ns, [1, 2, nil]]).to be false
+    expect(described_class["and"][ns, []]).to be true
+    expect(described_class["and"][ns, [1, 2, 3]]).to be 3
+    expect(described_class["and"][ns, [1, 2, nil]]).to be_nil
+    expect(described_class["and"][ns, [1, false, ["boom"]]]).to be false
   end
 
   it "or" do
-    expect(described_class["or"][ns, [1, 2, 3]]).to be 1
-    expect(described_class["or"][ns, [nil, 2, 3]]).to be 2
-    expect(described_class["or"][ns, [nil, nil, nil]]).to be_nil
+    expect(described_class["or"][ns, []]).to be_nil
+    expect(described_class["or"][ns, [1, ["boom"]]]).to be 1
+    expect(described_class["or"][ns, [false, nil, 2]]).to be 2
+    expect(described_class["or"][ns, [nil, false]]).to be false
   end
 
   it "if" do
-    expect(described_class["if"][ns, [true, 1, 2]]).to be 1
-    expect(described_class["if"][ns, [nil, 1, 2]]).to be 2
+    expect(described_class["if"][ns, [true, ["+", 1, 2], ["boom"]]]).to be 3
+    expect(described_class["if"][ns, [false, ["boom"], ["+", 2, 3]]]).to be 5
+    expect(described_class["if"][ns, [nil, ["boom"]]]).to be_nil
   end
 
   it "when" do
-    expect(described_class["when"][ns, [true, 1]]).to be 1
-    expect(described_class["when"][ns, [nil, 1]]).to be_nil
+    expect(described_class["when"][ns, [true, 1, ["+", 2, 3]]]).to be 5
+    expect(described_class["when"][ns, [false, ["boom"]]]).to be_nil
+    expect(described_class["when"][ns, [nil, ["boom"]]]).to be_nil
   end
 
   it "when-not" do
-    expect(described_class["when-not"][ns, [true, 1]]).to be_nil
+    expect(described_class["when-not"][ns, [true, ["boom"]]]).to be_nil
+    expect(described_class["when-not"][ns, [false, 1, ["+", 2, 3]]]).to be 5
     expect(described_class["when-not"][ns, [nil, 1]]).to be 1
   end
 
@@ -151,8 +159,40 @@ RSpec.describe Clojure::Core do
   end
 
   it "fn" do
-    fn = described_class["fn"][ns, [%w[vector a b], %w[+ a b]]]
+    fn = described_class["fn"][ns, [%w[vector a b], ["+", "a", 1], %w[+ a b]]]
     expect(fn.call(ns, [1, 2])).to eq 3
+  end
+
+  it "fn with local name" do
+    fact = described_class["fn"][ns, [
+      "fact",
+      %w[vector n],
+      ["if", ["=", "n", 0], 1, ["*", "n", ["fact", ["-", "n", 1]]]]
+    ]]
+    expect(fact.call(ns, [5])).to eq 120
+  end
+
+  it "fn with rest arguments" do
+    fn = described_class["fn"][ns, [%w[vector a & more], ["vector", "a", "more"]]]
+    expect(fn.call(ns, [1, 2, 3])).to eq [1, [2, 3]]
+    expect(fn.call(ns, [1])).to eq [1, []]
+  end
+
+  it "fn with multiple arities" do
+    fn = described_class["fn"][ns, [
+      "sum",
+      [%w[vector a], ["sum", "a", 10]],
+      [%w[vector a b], %w[+ a b]]
+    ]]
+    expect(fn.call(ns, [5])).to eq 15
+    expect(fn.call(ns, [5, 6])).to eq 11
+    expect { fn.call(ns, [1, 2, 3]) }.to raise_error(StandardError, /Wrong number of args/)
+  end
+
+  it "fn rejects destructuring" do
+    expect do
+      described_class["fn"][ns, [["vector", %w[vector a b]], %w[+ a b]]]
+    end.to raise_error(StandardError, "Destructuring is not supported in fn")
   end
 
   it "def" do
@@ -161,7 +201,8 @@ RSpec.describe Clojure::Core do
   end
 
   it "defn" do
-    described_class["defn"][ns, ["sum", %w[vector a b], %w[+ a b]]]
+    described_class["defn"][ns, ["sum", [%w[vector a], "a"], [%w[vector a b], %w[+ a b]]]]
+    expect(ns["sum"].call(ns, [4])).to eq 4
     expect(ns["sum"].call(ns, [1, 2])).to eq 3
   end
 

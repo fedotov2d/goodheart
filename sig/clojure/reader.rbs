@@ -1,5 +1,7 @@
 module Clojure
   class Reader
+    SYMBOL_CHAR: Regexp
+
     @source: String
     @io: StringIO
     @cursor: untyped
@@ -19,6 +21,8 @@ module Clojure
 
     def read_next: () -> untyped
 
+    def read_signed: () -> (Integer | Float | Rational | String)
+
     def read_special: () -> untyped
 
     def read_sexp_comment: () -> nil
@@ -29,7 +33,9 @@ module Clojure
 
     def read_form: (?till: String, ?into: Array[untyped]) -> Array[untyped]
 
-    def read_number: () -> (Integer | Float)
+    def read_number: (?String prefix) -> (Integer | Float | Rational)
+
+    def parse_number: (String token) -> (Integer | Float | Rational)
 
     def read_keyword: () -> Symbol
 
@@ -37,6 +43,6 @@ module Clojure
 
     def read_string: () -> Array[untyped]
 
-    def read_symbol: () -> String
+    def read_symbol: (?String symbol) -> String
   end
 end

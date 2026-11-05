@@ -12,7 +12,8 @@ module Clojure
     attr_reader :runtime
 
     # calls with postponed evaluation of expression
-    SPECIAL = %w[ns fn defn def quote let for].freeze
+    SPECIAL = %w[ns fn defn def quote let for if do and or when when-not].freeze
+    LITERALS = { "true" => true, "false" => false, "nil" => nil }.freeze
 
     def evaluate(form)
       case form
@@ -28,18 +29,20 @@ module Clojure
     private
 
     def resolve(symbol)
+      return LITERALS[symbol] if LITERALS.key?(symbol)
+
       n, ns = symbol.split("/").reverse
-      i = self[ns] || self[n] || Clojure::Core[symbol] || raise("Can't resolve #{symbol}.")
-      case i
-      when Clojure::Alias
-        if ns
-          i.lookup[n]
-        else
-          i.lookup
-        end
-      else
-        i
-      end
+      i = lookup(symbol, n, ns)
+      return i unless i.is_a?(Clojure::Alias)
+
+      ns ? i.lookup[n] : i.lookup
+    end
+
+    def lookup(symbol, name, ns_name)
+      return self[ns_name] if ns_name && key?(ns_name)
+      return self[name] if name && key?(name)
+
+      Clojure::Core[symbol] || raise("Can't resolve #{symbol}.")
     end
 
     def form_eval(form)

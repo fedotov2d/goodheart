@@ -19,10 +19,10 @@ module Clojure
     define "str", ->(_ctx, args) { args.join }
     define "quote", ->(_ctx, args) { args.first }
 
-    define "not", ->(_ctx, args) { !args }
+    define "not", ->(_ctx, args) { !args.first }
     define "nil?", ->(_ctx, args) { args.first.nil? }
 
-    define "do", ->(ctx, args) { args.map {|f| ctx.evaluate f } }
+    define "do", ->(ctx, args) { args.map {|f| ctx.evaluate f }.last }
 
     define "subs", ->(ctx, args) { ctx.evaluate(args[0])[ctx.evaluate(args[1])..(ctx.evaluate(args[2]) || -1)] }
 
@@ -51,17 +51,38 @@ module Clojure
       end
     end)
 
-    define "and", ->(ctx, args) { args.map {|form| ctx.evaluate form }.all? }
+    define "and", (lambda do |ctx, args|
+      result = true
+      args.each do |form|
+        result = ctx.evaluate(form)
+        return result unless result
+      end
+      result
+    end)
+
     define "or", (lambda do |ctx, args|
-      args.find {|form| !ctx.evaluate(form).nil? }
+      result = nil
+      args.each do |form|
+        result = ctx.evaluate(form)
+        return result if result
+      end
+      result
     end)
 
     define "if", (lambda do |ctx, args|
       clause, then_expr, else_expr = args
-      ctx.evaluate(clause) ? then_expr : else_expr
+      ctx.evaluate(clause) ? ctx.evaluate(then_expr) : ctx.evaluate(else_expr)
     end)
-    define "when", ->(ctx, args) { self["if"][ctx, [*args[0..1], nil]] }
-    define "when-not", ->(ctx, args) { self["if"][ctx, [args[0], nil, args[1]]] }
+
+    define "when", (lambda do |ctx, args|
+      clause, *body = args
+      self["do"][ctx, body] if ctx.evaluate(clause)
+    end)
+
+    define "when-not", (lambda do |ctx, args|
+      clause, *body = args
+      self["do"][ctx, body] unless ctx.evaluate(clause)
+    end)
 
     define "count", ->(_ctx, args) { (args[0] || []).length }
     define "get", ->(_ctx, args) { args[0][args[1]] || args[2] }
@@ -137,17 +158,67 @@ module Clojure
     end)
 
     define "fn", (lambda do |ctx, args|
-      # TODO: poor implementation
-      lambda do |_ctx, fn_args|
-        params = args[0][1..].zip(fn_args)
-        fn_ctx = ctx.dup
-        params.each {|k, v| fn_ctx[k] = v }
-        args[1..].map do |form|
-          fn_ctx.evaluate form
-        end.last
+      fn_name, arities = parse_fn(args)
+      # @type var fn_proc: function
+      fn_proc = lambda do |_ctx, fn_args|
+        invoke_fn(ctx, fn_name, fn_proc, arities, fn_args)
       end
     end)
 
     define "defn", ->(ctx, args) { self["def"].call(ctx, [args[0], self["fn"].call(ctx, args[1..])]) }
+
+    class << self
+      def parse_fn(args)
+        fn_name = args.first if args.first.is_a?(String)
+        clauses = fn_name ? args.drop(1) : args
+        raw_arities = vector_form?(clauses.first) ? [clauses] : clauses
+        [fn_name, raw_arities.map {|clause| parse_arity(clause) }]
+      end
+
+      def vector_form?(form)
+        form.is_a?(Array) && form.first == "vector"
+      end
+
+      def parse_arity(clause)
+        params_form, *body = clause
+        raise StandardError, "Parameter declaration should be a vector" unless vector_form?(params_form)
+
+        fixed, rest_param = split_params(params_form.drop(1))
+        [fixed, rest_param, body]
+      end
+
+      def split_params(raw_params)
+        raise StandardError, "Destructuring is not supported in fn" unless raw_params.all?(String)
+        return [raw_params, nil] unless raw_params.include?("&")
+
+        amp_idx = raw_params.index("&") || 0
+        raise StandardError, "Invalid parameter list" if raw_params.count("&") > 1 || amp_idx != raw_params.length - 2
+
+        [raw_params.take(amp_idx), raw_params.last]
+      end
+
+      def match_arity(arities, arg_count)
+        arities.find do |fixed, rest_param, _body|
+          rest_param ? arg_count >= fixed.length : arg_count == fixed.length
+        end
+      end
+
+      def invoke_fn(ctx, fn_name, fn_proc, arities, fn_args)
+        arity = match_arity(arities, fn_args.length)
+        raise StandardError, "Wrong number of args (#{fn_args.length}) passed to: #{fn_name || 'fn'}" unless arity
+
+        fn_ctx = bind_fn_context(ctx, fn_name, fn_proc, arity, fn_args)
+        arity[2].map {|form| fn_ctx.evaluate form }.last
+      end
+
+      def bind_fn_context(ctx, fn_name, fn_proc, arity, fn_args)
+        fixed, rest_param, _body = arity
+        fn_ctx = ctx.dup
+        fn_ctx[fn_name] = fn_proc if fn_name
+        fixed.each_with_index {|k, idx| fn_ctx[k] = fn_args[idx] }
+        fn_ctx[rest_param] = fn_args[fixed.length..] || [] if rest_param
+        fn_ctx
+      end
+    end
   end
 end

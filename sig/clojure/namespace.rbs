@@ -1,6 +1,7 @@
 module Clojure
   class Namespace < Hash[untyped, untyped]
     SPECIAL: Array[String]
+    LITERALS: Hash[String, bool?]
 
     def initialize: (Runtime runtime) -> void
 
@@ -11,6 +12,8 @@ module Clojure
     private
 
     def resolve: (String symbol) -> untyped
+
+    def lookup: (String symbol, String? name, String? ns_name) -> untyped
 
     def form_eval: (Array[untyped] form) -> untyped
   end

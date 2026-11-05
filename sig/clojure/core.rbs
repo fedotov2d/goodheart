@@ -3,5 +3,19 @@ module Clojure
   # Call them as Core["name"][context, arguments].
   class Core
     extend Library
+
+    def self.parse_fn: (Array[untyped] args) -> [String?, Array[untyped]]
+
+    def self.vector_form?: (untyped form) -> bool
+
+    def self.parse_arity: (Array[untyped] clause) -> [Array[untyped], String?, Array[untyped]]
+
+    def self.split_params: (Array[untyped] raw_params) -> [Array[untyped], String?]
+
+    def self.match_arity: (Array[untyped] arities, Integer arg_count) -> untyped
+
+    def self.invoke_fn: (Namespace ctx, String? fn_name, function fn_proc, Array[untyped] arities, Array[untyped] fn_args) -> untyped
+
+    def self.bind_fn_context: (Namespace ctx, String? fn_name, function fn_proc, Array[untyped] arity, Array[untyped] fn_args) -> Namespace
   end
 end
